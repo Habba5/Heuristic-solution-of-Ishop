@@ -13,7 +13,16 @@
 #r.read
 
 from requests import Session
+import requests
+from bs4 import BeautifulSoup
 import base64
+
+url = 'https://www.magickartenmarkt.de/Cards/Propaganda'
+page = requests.get(url)
+soup = BeautifulSoup(page.text, 'html.parser')
+#print(soup.prettify())
+items = soup.find_all('tr')
+print(items[8:])
 
 session = Session()
 
