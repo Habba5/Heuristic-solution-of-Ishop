@@ -23,21 +23,22 @@ soup = BeautifulSoup(page.text, 'html.parser')
 #print(soup.prettify())
 items = soup.find_all('tr')
 print(items[8:])
-
-session = Session()
-
-session.head('https://www.magickartenmarkt.de')
-
-response = session.post(
-    url='https://www.magickartenmarkt.de/iajax.php',
-    data={
-    'args' : 'ug%60a%60K%5BQRSAP%0F%0Cvrxb%7CYImO%25%22%2B.%21%2B%12%26%2A%25%2F%2A%2A%2A4352,11,'
-    },
-    headers={
-        'Referer': 'https://www.magickartenmarkt.de/Cards/Propaganda'
-    }
-)
-str = response.text
-str = str[67:-31]
-str = base64.b64decode(str)
-print(str)
+print(type(soup))
+#print(soup.tbody)
+# session = Session()
+#
+# session.head('https://www.magickartenmarkt.de')
+#
+# response = session.post(
+#     url='https://www.magickartenmarkt.de/iajax.php',
+#     data={
+#     'args' : 'ug%60a%60K%5BQRSAP%0F%0Cvrxb%7CYImO%25%22%2B.%21%2B%12%26%2A%25%2F%2A%2A%2A4352,11,'
+#     },
+#     headers={
+#         'Referer': 'https://www.magickartenmarkt.de/Cards/Propaganda'
+#     }
+# )
+# str = response.text
+# str = str[67:-31]
+# str = base64.b64decode(str)
+# print(str)
