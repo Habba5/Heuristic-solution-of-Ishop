@@ -41,6 +41,8 @@ class ControllerCardSearch(Controller):
                 card.append(urlcarden + cardstring)
             else:
                 wrongcards.append(card[1])
+            card.append("Deutsch")
+            card.append("Excellent")
 
         if not wrongcards:
             print("success")
