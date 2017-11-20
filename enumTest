@@ -1,0 +1,14 @@
+from enum import Enum
+
+
+class Condtion(Enum):
+    Excellent = 0
+    Mint = 1
+    Near_Mint = 2
+    Light_Played = 3
+    Played = 4
+
+a = [Condtion.Excellent, Condtion.Played]
+print(a)
+a.remove(Condtion.Played)
+print(a)

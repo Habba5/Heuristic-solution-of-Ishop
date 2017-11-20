@@ -105,16 +105,19 @@ class ViewCardListing(View):
             menubutton.configure(menu=menu)
             menubutton.grid(row=i+1, column=4)
 
-            self.choices.append({})
-            for choice in ("Deutsch", "English"):
-                self.choices[i][choice] = IntVar(value=1)
-                menu.add_checkbutton(label=choice, variable=self.choices[i][choice],
-                                     onvalue=1, offvalue=0)
-
-            self.choices[i][1].trace("w", lambda name, index, mode, var=self.choices[i][1], i=i:
-            self.printValues(var))
             #variablelanguage = StringVar()
             #variablelanguage.set("Deutsch")  # default value
+
+            # self.choices.append({})
+            # for choice in ("Deutsch", "English"):
+            #     self.choices[i][choice] = IntVar(value=1)
+            #     menu.add_checkbutton(label=choice, variable=variablelanguage,
+            #                          onvalue=1, offvalue=0)
+
+            # variable=self.choices[i][choice]
+            #self.choices[i][1].trace("w", lambda name, index, mode, var=self.choices[i][1], i=i:
+            #self.printValues(var))
+
 
             #variablecondition = StringVar()
             #variablecondition.set("Excellent")  # default value
