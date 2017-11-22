@@ -1,4 +1,5 @@
 from View.view import *
+import numpy as np
 
 
 class ViewCardListing(View):
@@ -8,6 +9,7 @@ class ViewCardListing(View):
         self.variablelanguage = []
         self.variablecondition = []
         self.choices = []
+        self.var = []
         # Create an empty Canvas (Declaring doesn´t work here, because super.view method clears frame)
         self.canvas = NONE
 
@@ -108,15 +110,19 @@ class ViewCardListing(View):
             #variablelanguage = StringVar()
             #variablelanguage.set("Deutsch")  # default value
 
-            # self.choices.append({})
-            # for choice in ("Deutsch", "English"):
-            #     self.choices[i][choice] = IntVar(value=1)
-            #     menu.add_checkbutton(label=choice, variable=variablelanguage,
-            #                          onvalue=1, offvalue=0)
+            #self.var.np.append(self.var, [[IntVar(), IntVar()]],0)
+            self.var = np.append(self.var, [[IntVar(), IntVar()]])
+            self.choices.append({})
+            for choice in ("Deutsch", "English"):
+                incr = 0
+                #self.choices[i][choice] = 1
+                menu.add_checkbutton(label=choice, variable=self.var[i][incr],
+                                     onvalue=1, offvalue=0)
+                incr+=1
 
             # variable=self.choices[i][choice]
-            #self.choices[i][1].trace("w", lambda name, index, mode, var=self.choices[i][1], i=i:
-            #self.printValues(var))
+            # self.choices[i][1].trace("w", lambda name, index, mode, var=self.choices[i][1], i=i:
+            # self.printValues(var))
 
 
             #variablecondition = StringVar()

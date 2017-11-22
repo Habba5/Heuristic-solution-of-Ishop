@@ -12,6 +12,7 @@ class ControllerCardListing(Controller):
         self.view.variablelanguage = []
         self.view.variablecondition = []
         self.view.choices = []
+        self.view.var = []
         self.view.view(self.model.deck)
 
     def updateModelLanguage(self, i, language):
