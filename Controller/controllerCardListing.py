@@ -1,29 +1,62 @@
 from Controller.controller import *
-from View.viewCardListing import *
+from Enum.Location import *
+from Enum.SellerRating import *
+from Enum.Language import *
+from Enum.Condition import *
 
 
 class ControllerCardListing(Controller):
-    def __init__(self, model):
-        view = ViewCardListing()
+    def __init__(self, model, view):
         super().__init__(model, view)
 
+    def getSellerRating(self):
+        return self.model.sellerrating
+
+    def getLocation(self):
+        return self.model.location
+
+    def getDeck(self):
+        return self.model.deck
+
     def update(self):
-        self.view.sva = []
-        self.view.variablelanguage = []
-        self.view.variablecondition = []
-        self.view.choices = []
-        self.view.var = []
-        self.view.view(self.model.deck)
+        self.view.cardamount = []
+        self.view.choiceslanguage = {}
+        self.view.choicescondition = {}
+        self.view.view()
 
     def updateModelLanguage(self, i, language):
         self.model.deck[i][3] = language
         print("Updated Language of card" + self.model.deck[i][1] + " to " + self.model.deck[i][3])
 
+    def updateModelLocation(self, location):
+        self.model.location = Location[location]
+        print(self.model.location.name)
+
+    def updateModelRating(self, rating):
+        self.model.sellerrating = SellerRating[rating]
+        print(self.model.sellerrating.name)
+
+    def updateModelCardLanguage(self, i, choice, language):
+        #print(self.model.deck[i].cardlanguage)
+        if(language == 0):
+            self.model.deck[i].cardlanguage.remove(Language[choice])
+        else:
+            self.model.deck[i].cardlanguage.append(Language[choice])
+        #print(self.model.deck[i].cardlanguage)
+
+    def updateModelCardCondition(self, i, choice, condition):
+        print(self.model.deck[i].cardcondition)
+        if(condition == 0):
+            self.model.deck[i].cardcondition.remove(Condition[choice])
+        else:
+            self.model.deck[i].cardcondition.append(Condition[choice])
+        print(self.model.deck[i].cardcondition)
+
     def updateModel(self, i, count):
         if(count == '0'):
             delcard = self.model.deck.pop(i)
             self.update()
-            print("Card " + delcard + "deleted")
+            print("Card " + delcard.cardname + "deleted")
         else:
-            self.model.deck[i][0] = count
-            print("Updated card count at index" + i + "to count" + count)
+            self.model.deck[i].cardamount = count
+            print("Updated card count at index" + str(i) + "to count" + str(count))

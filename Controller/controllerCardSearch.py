@@ -13,9 +13,9 @@ thread_lock = threading.Lock()
 
 class ControllerCardSearch(Controller):
 
-    def __init__(self, model):
+    def __init__(self, model, view):
         self.wrongcards = []
-        view = ViewCardSearch()
+        #view = ViewCardSearch()
         super().__init__(model, view)
 
 

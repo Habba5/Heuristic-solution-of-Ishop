@@ -6,8 +6,8 @@ from selenium.common.exceptions import NoSuchElementException
 
 
 class ControllerLogin(Controller):
-    def __init__(self, model):
-        view = ViewLogin()
+    def __init__(self, model, view):
+        #view = ViewLogin()
         super().__init__(model, view)
 
     def login(self, username, password):
@@ -47,4 +47,4 @@ class ControllerLogin(Controller):
 
     def cardSearch(self):
         self.view.clear_frame()
-        cardSearch()
+        #cardSearch()

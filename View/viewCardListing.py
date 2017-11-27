@@ -1,32 +1,41 @@
 from View.view import *
-import numpy as np
+from Enum.Location import *
+from Enum.SellerRating import *
+from Enum.Language import *
+from Enum.Condition import *
 
 
 class ViewCardListing(View):
     def __init__(self):
         super().__init__()
-        self.sva = []
-        self.variablelanguage = []
-        self.variablecondition = []
-        self.choices = []
-        self.var = []
+        # Variable for amounts of every card
+        # can be edit by a textfield
+        self.cardamount = []
+        # dictionary for languages of selected card
+        self.choiceslanguage = {}
+        # dictionary for condition of selected card
+        self.choicescondition = {}
         # Create an empty Canvas (Declaring doesn´t work here, because super.view method clears frame)
         self.canvas = NONE
 
-    def entryupdatelanguage(self, sv, i, deck):
-        print(i)
-        print(sv, i, deck[i][0], sv.get())
-        self.controller.updateModelLanguage(i, sv.get())
+    def updatelocation(self, location):
+        self.controller.updateModelLocation(location)
 
-    def entryupdatecondition(self, sv, i, deck):
-        print(i)
-        print(sv, i, deck[i][0], sv.get())
-        self.controller.updateModelCondition(i, sv.get())
+    def updaterating(self, rating):
+        self.controller.updateModelRating(rating)
 
-    def entryupdate(self, sv, i, deck):
+    def updatecardlanguage(self, i, choice, language):
+        #print("Position :" + str(i) + " Sprache:" + str(language.get()))
+        #print(self.choiceslanguage.items())
+        self.controller.updateModelCardLanguage(i, choice, language.get())
+
+    def updatecardcondition(self, i, choice, condition):
+        self.controller.updateModelCardCondition(i, choice, condition.get())
+
+    def entryupdate(self, i, newamount):
         print(i)
-        print(sv, i, deck[i][0], sv.get())
-        self.controller.updateModel(i, sv.get())
+        #print(sv, i, deck[i][0], sv.get())
+        self.controller.updateModel(i, newamount.get())
 
     def onFrameConfigure(self, event):
         '''Reset the scroll region to encompass the inner frame'''
@@ -35,12 +44,7 @@ class ViewCardListing(View):
     def clickedCalculate(self, location, rating):
         self.controller.calculate(location, rating)
 
-    def printValues(self, choice):
-        print(self.choices)
-        for name, var in choice.items():
-            print("%s: %s" % (name, var.get()))
-
-    def view(self, deck):
+    def view(self):
         super().view()
 
         # Creating a Canvas inside the frame, with a scrollbar
@@ -62,22 +66,36 @@ class ViewCardListing(View):
         newframe = Frame(self.canvas)
         self.canvas.create_window((0, 0), window=newframe, anchor='nw')
 
-        # add widgets in frame
-
-        # lbl1 = Label(self.frame, text="Kartenname")
-        # lbl1.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
-        # lbl2 = Label(self.frame, text="Anzahl")
-        # lbl2.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
-        # lbl3 = Label(self.frame, text="Kondition")
-        # lbl3.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
-        # lbl4 = Label(self.frame, text="Sprache")
-        # lbl4.grid(row=0, column=3, sticky="nsew", padx=5, pady=5)
-
+        # set and trace a variable for the location of the user
         variablelocation = StringVar()
-        variablelocation.set("Deutschland")  # default value
+        variablelocation.set((self.controller.getLocation()).name)  # default value
+        variablelocation.trace("w", lambda name, index, mode: self.updatelocation(variablelocation.get()))
 
+        # set and trace a variable for the minimum rating of the seller
         variablerating = StringVar()
-        variablerating.set("Deutschland")  # default value
+        variablerating.set((self.controller.getSellerRating()).name)  # default value
+        variablerating.trace("w", lambda name, index, mode: self.updaterating(variablerating.get()))
+
+        # create a list of all options from Enum Location
+        locations = []
+        for location in Location:
+            locations.append(location.name)
+
+        # create a list of all options from Enum SellerRating
+        ratings = []
+        for rating in SellerRating:
+            ratings.append(rating.name)
+
+        # create a list of all options from Enum
+        languages = []
+        for language in Language:
+            languages.append(language.name)
+
+        # create a list of all options from Enum
+        conditions = []
+        for condition in Condition:
+            conditions.append(condition.name)
+
 
         lbl1 = Label(newframe, text="Kartenname")
         lbl1.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
@@ -89,68 +107,60 @@ class ViewCardListing(View):
         lbl4.grid(row=0, column=3, sticky="nsew", padx=5, pady=5)
         lbl5 = Label(newframe, text="Ihr Standort")
         lbl5.grid(row=50, column=0, sticky="nsew", padx=5, pady=5)
-        location = OptionMenu(newframe, variablelocation, "Deutschland", "England")
-        location.grid(row=51, column=0, sticky="nsew", padx=5, pady=5)
+        menulocation = OptionMenu(newframe, variablelocation, *locations)
+        menulocation.grid(row=51, column=0, sticky="nsew", padx=5, pady=5)
         lbl6 = Label(newframe, text="Verkäufer Mindestbewertung")
         lbl6.grid(row=52, column=0, sticky="nsew", padx=5, pady=5)
-        rating = OptionMenu(newframe, variablerating, "Deutschland", "England")
-        rating.grid(row=53, column=0, sticky="nsew", padx=5, pady=5)
+        menurating = OptionMenu(newframe, variablerating, *ratings)
+        menurating.grid(row=53, column=0, sticky="nsew", padx=5, pady=5)
         btn = Button(newframe, text="Preis berechnen", command=lambda: self.clickedCalculate(variablelocation, variablerating))
         btn.grid(row=2, sticky="w", column=0, padx=5, pady=5)
 
+        deck = self.controller.getDeck()
 
         for card in deck:
-            i = len(self.sva)
+            i = len(self.cardamount)
 
-            menubutton = Menubutton(newframe, text="Sprache/n", indicatoron=True, borderwidth=1, relief="raised")
-            menu = Menu(menubutton, tearoff=False)
-            menubutton.configure(menu=menu)
-            menubutton.grid(row=i+1, column=4)
+            # define menu for languages
+            menubuttonlanguage = Menubutton(newframe, text="Sprache/n", indicatoron=True, borderwidth=1, relief="raised")
+            menulanguage = Menu(menubuttonlanguage, tearoff=False)
+            menubuttonlanguage.configure(menu=menulanguage)
+            menubuttonlanguage.grid(row=i+1, column=3)
 
-            #variablelanguage = StringVar()
-            #variablelanguage.set("Deutsch")  # default value
+            # define menu for condition
+            menubuttoncondition = Menubutton(newframe, text="Kondition/en", indicatoron=True, borderwidth=1, relief="raised")
+            menucondition = Menu(menubuttoncondition, tearoff=False)
+            menubuttoncondition.configure(menu=menucondition)
+            menubuttoncondition.grid(row=i+1, column=4)
 
-            #self.var.np.append(self.var, [[IntVar(), IntVar()]],0)
-            self.var = np.append(self.var, [[IntVar(), IntVar()]])
-            self.choices.append({})
-            for choice in ("Deutsch", "English"):
-                incr = 0
-                #self.choices[i][choice] = 1
-                menu.add_checkbutton(label=choice, variable=self.var[i][incr],
-                                     onvalue=1, offvalue=0)
-                incr+=1
+            # cardamount is the amount of a specific card
+            # Tracer for changes in cardamount
+            self.cardamount.append(StringVar())
+            self.cardamount[i].set(card.cardamount)
+            self.cardamount[i].trace("w", lambda name, index, mode, var=self.cardamount[i], i=i:
+            self.entryupdate(i, var))
 
-            # variable=self.choices[i][choice]
-            # self.choices[i][1].trace("w", lambda name, index, mode, var=self.choices[i][1], i=i:
-            # self.printValues(var))
+            # add choices for menulanguage
+            for choice in languages:
+                if Language[choice] in card.cardlanguage:
+                    self.choiceslanguage[str(i)+choice] = IntVar(value=1)
+                else:
+                    self.choiceslanguage[str(i)+choice] = IntVar(value=0)
+                menulanguage.add_checkbutton(label=choice, variable=self.choiceslanguage[str(i)+choice],
+                                     onvalue=1, offvalue=0, command=lambda i=i, choice=choice: self.updatecardlanguage(i, choice, self.choiceslanguage[str(i)+choice]))
 
+            # add choices for menucondition
+            for choice in conditions:
+                if Condition[choice] in card.cardcondition:
+                    self.choicescondition[str(i) + choice] = IntVar(value=1)
+                else:
+                    self.choicescondition[str(i) + choice] = IntVar(value=0)
+                menucondition.add_checkbutton(label=choice, variable=self.choicescondition[str(i) + choice],
+                                     onvalue=1, offvalue=0, command=lambda i=i, choice=choice: self.updatecardcondition(i, choice, self.choicescondition[str(i) + choice]))
 
-            #variablecondition = StringVar()
-            #variablecondition.set("Excellent")  # default value
-
-            self.sva.append(StringVar())
-            self.sva[i].set(card[0])
-            self.sva[i].trace("w", lambda name, index, mode, var=self.sva[i], i=i:
-            self.entryupdate(var, i, deck))
-
-            self.variablelanguage.append(StringVar())
-            self.variablelanguage[i].set("Deutsch")
-            self.variablelanguage[i].trace("w", lambda name, index, mode, var=self.variablelanguage[i], i=i:
-            self.entryupdatelanguage(var, i, deck))
-
-            self.variablecondition.append(StringVar())
-            self.variablecondition[i].set("Excellent")
-            self.variablecondition[i].trace("w", lambda name, index, mode, var=self.variablecondition[i], i=i:
-            self.entryupdatecondition(var, i, deck))
-
-            label = Label(newframe, text=card[1])
+            # Widgets for individual card
+            # contains traced cardamount and name
+            label = Label(newframe, text=card.cardname)
             label.grid(row=i+1, column=0, sticky="nsew", padx=5, pady=5)
-            entry = Entry(newframe, text=self.sva[i])
+            entry = Entry(newframe, text=self.cardamount[i])
             entry.grid(row=i+1, column=1, sticky="nsew", padx=5, pady=5)
-            condition = OptionMenu(newframe, self.variablecondition[i], "Excellent", "Mint", "Near Mint", "Light Played", "Played")
-            condition.grid(row=i+1, column=2, sticky="nsew", padx=5, pady=5)
-            language = OptionMenu(newframe, self.variablelanguage[i], "Deutsch", "Englisch")
-            language.grid(row=i+1, column=3, sticky="nsew", padx=5, pady=5)
-
-
-
