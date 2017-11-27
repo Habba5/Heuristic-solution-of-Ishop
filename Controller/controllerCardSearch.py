@@ -5,6 +5,7 @@ from queue import Queue
 import io
 import threading
 from requests import Session, head, codes
+import time
 
 
 MAX_THREADS = 5
@@ -53,6 +54,9 @@ class ControllerCardSearch(Controller):
             q.task_done()
 
     def searchCards(self, cards):
+        # wait a second so tkinter doesn´t cry
+        # i have noooo idea why this even works -.-
+        time.sleep(1)
         buf = io.StringIO(cards)
         # wrongcards = []
         listcard = []
@@ -92,9 +96,13 @@ class ControllerCardSearch(Controller):
         if not self.wrongcards:
             print("success")
             self.model.printdeck()
+            self.cardListing()
         else:
-            self.view.viewError("Die folgenden Karte/n konnte/n nicht gefunden werden :", self.wrongcards)
-            self.wrongcards.clear()
+            try:
+                self.view.viewError("Die folgenden Karte/n konnte/n nicht gefunden werden :", self.wrongcards)
+                self.wrongcards.clear()
+            except RuntimeError:
+                pass
 
 
     def cardListing(self):
