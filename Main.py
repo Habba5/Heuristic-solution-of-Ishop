@@ -66,7 +66,7 @@ def login():
 if (__name__ == "__main__"):
     # model = Model()
     # start()
-    # login()
+    login()
     cardSearch()
     cardListing()
     siteScrap()

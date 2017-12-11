@@ -9,6 +9,7 @@ class View(object):
         self.controller = None
 
     def clear_frame(self):
+        self.parent.quit()
         self.parent.destroy()
 
     def clear_screen(self):

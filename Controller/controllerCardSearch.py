@@ -76,9 +76,6 @@ class ControllerCardSearch(Controller):
 
 
     def searchCards(self, cards):
-        # wait a second so tkinter doesn´t cry
-        # i have noooo idea why this even works -.-
-        time.sleep(1)
         buf = io.StringIO(cards)
         # wrongcards = []
         listcard = []
@@ -117,6 +114,8 @@ class ControllerCardSearch(Controller):
         manager_thread = QueueChecker(queue)
         manager_thread.start()
         self.message('*** main thread waiting')
+        # Terminate UI to delete Tcl-Interpreter
+        # self.view.parent.quit()
 
         while manager_thread.is_alive():
             self.view.testprog(queuesize, queue.unfinished_tasks, 0)
