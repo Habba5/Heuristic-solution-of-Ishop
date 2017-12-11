@@ -8,6 +8,9 @@ from Enum.Condition import *
 class ControllerCardListing(Controller):
     def __init__(self, model, view):
         super().__init__(model, view)
+        self.expansions = []
+        for card in self.model.deck:
+            self.expansions.append(["Egal"])
 
     def getSellerRating(self):
         return self.model.sellerrating
@@ -52,6 +55,19 @@ class ControllerCardListing(Controller):
             self.model.deck[i].cardcondition.append(Condition[choice])
         print(self.model.deck[i].cardcondition)
 
+    def updateModelCardExpansion(self, i, choice, expansion):
+        #print(self.model.deck[i].cardcondition)
+        if(expansion == 0):
+            self.expansions[i].remove(choice)
+        else:
+            if choice != "Egal":
+                self.expansions[i].append(choice)
+            else:
+                self.expansions[i] = ["Egal"]
+            #self.model.deck[i].cardcondition.append(Condition[choice])
+        print(self.expansions[i])
+
+
     def updateModel(self, i, count):
         if(count == '0'):
             delcard = self.model.deck.pop(i)
@@ -60,3 +76,10 @@ class ControllerCardListing(Controller):
         else:
             self.model.deck[i].cardamount = count
             print("Updated card count at index" + str(i) + "to count" + str(count))
+
+    def calculate(self):
+        i = 0
+        for expansion in self.expansions:
+            self.model.deck[i].expansions = expansion
+            i += 1
+        self.view.clear_frame()

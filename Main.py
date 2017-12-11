@@ -2,9 +2,11 @@ from Model.modelCredentials import *
 from Model.modelDeck import *
 from View.viewLogin import *
 from View.viewCardListing import *
+from View.viewCardSearch import *
 from Controller.controllerLogin import *
 from Controller.controllerCardSearch import *
 from Controller.controllerCardListing import *
+from queue import Queue
 
 
 #viewLogin = ViewLogin()
@@ -16,7 +18,8 @@ from Controller.controllerCardListing import *
 viewlogin = NONE
 viewcardlisting = NONE
 viewcardsearch = NONE
-view = [viewlogin, viewcardsearch, viewcardlisting]
+viewSiteScrap = NONE
+view = [viewlogin, viewcardsearch, viewcardlisting, viewSiteScrap]
 modelDeck = ModelDeck()
 modelCredentials = ModelCredentials()
 modelSiteScrap = NONE
@@ -25,13 +28,19 @@ controllerCardSearch = NONE
 controllerCardListing = NONE
 controllerLogin = NONE
 controllerCardBuy = NONE
-controller = [controllerLogin, controllerCardSearch, controllerCardListing, controllerCardBuy]
+controllerSiteScrap = NONE
+controller = [controllerLogin, controllerCardSearch, controllerCardListing, controllerSiteScrap, controllerCardBuy]
+
+def siteScrap():
+    return
 
 def cardSearch():
     #model[1] = ModelDeck()
     view[1] = ViewCardSearch()
     controller[1] = ControllerCardSearch(model[1], view[1])
     #controllerCardSearch = ControllerCardSearch(model)
+    #view[1].frame.after(100, view[1].testprog())
+    #controller[1].view.parent.protocol("WM_DELETE_WINDOW", controller[1].view.shutdown_ttk_repeat)
     controller[1].view.main_loop()
     view[1] = NONE
     controller[1] = NONE
@@ -41,6 +50,8 @@ def cardListing():
     controller[2] = ControllerCardListing(model[1], view[2])
     # controllerCardListing = ControllerCardListing(model)
     controller[2].view.main_loop()
+    view[2] = NONE
+    controller[2] = NONE
 
 def login():
     view[0] = ViewLogin()
@@ -55,9 +66,10 @@ def login():
 if (__name__ == "__main__"):
     # model = Model()
     # start()
-    login()
+    # login()
     cardSearch()
     cardListing()
+    siteScrap()
 
 #viewLogin.main_loop()
 #viewCardSearch.main_loop()

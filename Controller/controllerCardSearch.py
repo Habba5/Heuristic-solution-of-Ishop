@@ -1,16 +1,25 @@
 from Controller.controller import *
-from View.viewCardSearch import *
-#from Main import cardListing
 from queue import Queue
+from queue import *
 import io
 import threading
-from requests import Session, head, codes
+from requests import Session, head, codes, get
 import time
+from bs4 import BeautifulSoup
+import re
 
 
 MAX_THREADS = 5
 thread_lock = threading.Lock()
 
+
+class QueueChecker(threading.Thread):
+    def __init__(self, q):
+        threading.Thread.__init__(self)
+        self.q = q
+
+    def run(self):
+        self.q.join()
 
 class ControllerCardSearch(Controller):
 
@@ -41,9 +50,21 @@ class ControllerCardSearch(Controller):
             card = q.get()
             self.message('Testing {}'.format(card[0]))
             if self.exists(card[0]):
+                page = get(card[0])
+                expansions = []
+                expansions.append("Egal")
+                soup = BeautifulSoup(page.text, 'html.parser')
+                expansioncontainer = soup.find("div", {"class": "expansionsBox"})
+                items = expansioncontainer.find_all("span")
+                for item in items:
+                    expansions.append('-'.join(re.compile(r"(?<=\().+?(?=\))").findall(item["title"])))
+                totaloffers = soup.find("input", {"name": "totalResults"})["value"]
+                result = soup.find("div", {"id": "moreDiv"})["onclick"].split("'")
+                jcppayload = result[1]
+                idcard = (result[3])[:-1]
                 thread_lock.acquire()
-                if self.model.addcard(card[1], card[2], card[0]) == 0:
-                    self.message('Card not found{}'.format(card[2]))
+                if self.model.addcard(card[1], card[2], card[0], expansions, idcard, jcppayload, totaloffers) == 0:
+                    self.message('Double entry for card{}'.format(card[2]))
                     self.wrongcards.append(card[2])
                 thread_lock.release()
             else:
@@ -52,6 +73,7 @@ class ControllerCardSearch(Controller):
                 self.wrongcards.append(card[2])
                 thread_lock.release()
             q.task_done()
+
 
     def searchCards(self, cards):
         # wait a second so tkinter doesn´t cry
@@ -81,6 +103,8 @@ class ControllerCardSearch(Controller):
             # else:
             #     wrongcards.append(card[1])
 
+        queuesize = queue.qsize()
+
         for i in range(MAX_THREADS):
             worker = threading.Thread(
                 target=self.testUrls,
@@ -90,8 +114,21 @@ class ControllerCardSearch(Controller):
             worker.setDaemon(True)
             worker.start()
 
+        manager_thread = QueueChecker(queue)
+        manager_thread.start()
         self.message('*** main thread waiting')
-        queue.join()
+
+        while manager_thread.is_alive():
+            self.view.testprog(queuesize, queue.unfinished_tasks, 0)
+        self.view.testprog(queuesize, queue.unfinished_tasks, 1)
+        # starting tkinter lookup
+        # queuelength = self.queue.qsize()
+        # self.view.clear_frame()
+        # self.view.frame.after(100, self.view.testprog())
+        # self.testpoller(queuelength)
+
+        #self.message('*** main thread waiting')
+        #self.queue.join()
 
         if not self.wrongcards:
             print("success")

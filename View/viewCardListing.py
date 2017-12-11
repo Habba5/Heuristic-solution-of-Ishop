@@ -15,6 +15,8 @@ class ViewCardListing(View):
         self.choiceslanguage = {}
         # dictionary for condition of selected card
         self.choicescondition = {}
+        # dictionary for expansions of selected card
+        self.choicesexpansion = {}
         # Create an empty Canvas (Declaring doesn´t work here, because super.view method clears frame)
         self.canvas = NONE
 
@@ -32,6 +34,16 @@ class ViewCardListing(View):
     def updatecardcondition(self, i, choice, condition):
         self.controller.updateModelCardCondition(i, choice, condition.get())
 
+    def updatecardexpansion(self, i, choice, expansion):
+        if choice != "Egal" and self.choicesexpansion[str(i) + "Egal"].get() == 0:
+            self.controller.updateModelCardExpansion(i, choice, expansion.get())
+        elif choice != "Egal" and self.choicesexpansion[str(i) + "Egal"].get() == 1:
+            self.controller.updateModelCardExpansion(i, choice, expansion.get())
+            self.choicesexpansion[str(i) + "Egal"].set(0)
+            self.controller.updateModelCardExpansion(i, "Egal", 0)
+        elif choice == "Egal":
+            self.controller.updateModelCardExpansion(i, choice, expansion.get())
+
     def entryupdate(self, i, newamount):
         print(i)
         #print(sv, i, deck[i][0], sv.get())
@@ -42,13 +54,13 @@ class ViewCardListing(View):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def clickedCalculate(self, location, rating):
-        self.controller.calculate(location, rating)
+        self.controller.calculate()
 
     def view(self):
         super().view()
 
         # Creating a Canvas inside the frame, with a scrollbar
-        self.canvas = Canvas(self.frame, width=600)
+        self.canvas = Canvas(self.frame, width=700)
 
         self.canvas.pack(side=LEFT)
 
@@ -114,7 +126,7 @@ class ViewCardListing(View):
         menurating = OptionMenu(newframe, variablerating, *ratings)
         menurating.grid(row=53, column=0, sticky="nsew", padx=5, pady=5)
         btn = Button(newframe, text="Preis berechnen", command=lambda: self.clickedCalculate(variablelocation, variablerating))
-        btn.grid(row=2, sticky="w", column=0, padx=5, pady=5)
+        btn.grid(row=53, sticky="w", column=0, padx=5, pady=5)
 
         deck = self.controller.getDeck()
 
@@ -132,6 +144,12 @@ class ViewCardListing(View):
             menucondition = Menu(menubuttoncondition, tearoff=False)
             menubuttoncondition.configure(menu=menucondition)
             menubuttoncondition.grid(row=i+1, column=4)
+
+            # define menu for expansions
+            menubuttonexpansion = Menubutton(newframe, text="Erweiterung/en", indicatoron=True, borderwidth=1, relief="raised")
+            menuexpansion = Menu(menubuttonexpansion, tearoff=False)
+            menubuttonexpansion.configure(menu=menuexpansion)
+            menubuttonexpansion.grid(row=i + 1, column=5)
 
             # cardamount is the amount of a specific card
             # Tracer for changes in cardamount
@@ -157,6 +175,15 @@ class ViewCardListing(View):
                     self.choicescondition[str(i) + choice] = IntVar(value=0)
                 menucondition.add_checkbutton(label=choice, variable=self.choicescondition[str(i) + choice],
                                      onvalue=1, offvalue=0, command=lambda i=i, choice=choice: self.updatecardcondition(i, choice, self.choicescondition[str(i) + choice]))
+
+            # add choices for menuexpansion
+            for choice in card.expansions:
+                if(choice == "Egal"):
+                    self.choicesexpansion[str(i) + choice] = IntVar(value=1)
+                else:
+                    self.choicesexpansion[str(i) + choice] = IntVar(value=0)
+                menuexpansion.add_checkbutton(label=choice, variable=self.choicesexpansion[str(i) + choice],
+                                     onvalue=1, offvalue=0, command=lambda i=i, choice=choice: self.updatecardexpansion(i, choice, self.choicesexpansion[str(i) + choice]))
 
             # Widgets for individual card
             # contains traced cardamount and name
