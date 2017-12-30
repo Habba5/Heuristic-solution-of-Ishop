@@ -13,7 +13,7 @@ submit = browser.find_element_by_id("login-btn")
 
 # Input text in username and password inputboxes
 username.send_keys("Habba5")
-password.send_keys("496257abdr")
+password.send_keys("496257abdr") # dieses Passwort nutze ich auch auf GitHub
 
 # Click on the submit button
 submit.click()
