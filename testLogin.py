@@ -12,8 +12,8 @@ password = browser.find_element_by_id("userPassword")
 submit = browser.find_element_by_id("login-btn")
 
 # Input text in username and password inputboxes
-username.send_keys("Habba5")
-password.send_keys("496257abdr")
+username.send_keys("Habba5") # Call me, babe
+password.send_keys("496257abdr") # Teste doch mal aus, ob ich eine sichere Nummer bin
 
 # Click on the submit button
 submit.click()
