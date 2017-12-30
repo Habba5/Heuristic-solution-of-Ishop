@@ -7,7 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 class Start:
     # global variable
     root = Tk()
-    root.title("Einkaufshelfer für magickartenmarkt.de")
+    root.title("Einkaufshelfer für magickartenmarkt.de (aka NerdShop)")
     username = StringVar()
     password = StringVar()
 
