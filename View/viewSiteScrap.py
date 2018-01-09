@@ -8,8 +8,8 @@ class ViewSiteScrap(View):
     def view(self):
         super().view()
 
-        lbl = Label(self.frame, text="Karten werden gesucht ...")
-        lbl.grid(sticky="nsew", columnspan=2, padx=10, pady=10)
+        #lbl = Label(self.frame, text="Karten werden gesucht ...")
+        #lbl.grid(sticky="nsew", columnspan=2, padx=10, pady=10)
 
-        self.p = ttk.Progressbar(self.frame, orient=HORIZONTAL, length=200, mode='determinate')
-        self.p.pack
+        #self.p = ttk.Progressbar(self.frame, orient=HORIZONTAL, length=200, mode='determinate')
+        #self.p.pack

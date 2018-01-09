@@ -43,6 +43,11 @@ class ViewCardListing(View):
             self.controller.updateModelCardExpansion(i, "Egal", 0)
         elif choice == "Egal":
             self.controller.updateModelCardExpansion(i, choice, expansion.get())
+            deck = self.controller.getDeck()
+            card = deck[i]
+            for cardexpansion in card.expansions:
+                if cardexpansion != "Egal":
+                    self.choicesexpansion[str(i) + cardexpansion].set(0)
 
     def entryupdate(self, i, newamount):
         print(i)
@@ -126,8 +131,9 @@ class ViewCardListing(View):
         menurating = OptionMenu(newframe, variablerating, *ratings)
         menurating.grid(row=53, column=0, sticky="nsew", padx=5, pady=5)
         btn = Button(newframe, text="Preis berechnen", command=lambda: self.clickedCalculate(variablelocation, variablerating))
-        btn.grid(row=53, sticky="w", column=0, padx=5, pady=5)
+        btn.grid(row=54, sticky="w", column=0, padx=5, pady=5)
 
+        # ToDo Make row dependent on deck length
         deck = self.controller.getDeck()
 
         for card in deck:
@@ -183,7 +189,7 @@ class ViewCardListing(View):
                 else:
                     self.choicesexpansion[str(i) + choice] = IntVar(value=0)
                 menuexpansion.add_checkbutton(label=choice, variable=self.choicesexpansion[str(i) + choice],
-                                     onvalue=1, offvalue=0, command=lambda i=i, choice=choice: self.updatecardexpansion(i, choice, self.choicesexpansion[str(i) + choice]))
+                                     onvalue=1, offvalue=0, command=lambda i=i, choice=choice: [self.updatecardexpansion(i, choice, self.choicesexpansion[str(i) + choice])])
 
             # Widgets for individual card
             # contains traced cardamount and name

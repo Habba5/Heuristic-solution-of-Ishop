@@ -3,9 +3,13 @@ from Model.modelDeck import *
 from View.viewLogin import *
 from View.viewCardListing import *
 from View.viewCardSearch import *
+from View.viewSiteScrap import *
+from View.viewMinMin import *
 from Controller.controllerLogin import *
 from Controller.controllerCardSearch import *
 from Controller.controllerCardListing import *
+from Controller.controllerSiteScrap import *
+from Controller.controllerMinMin import *
 from queue import Queue
 
 
@@ -19,7 +23,8 @@ viewlogin = NONE
 viewcardlisting = NONE
 viewcardsearch = NONE
 viewSiteScrap = NONE
-view = [viewlogin, viewcardsearch, viewcardlisting, viewSiteScrap]
+viewMinMin = NONE
+view = [viewlogin, viewcardsearch, viewcardlisting, viewSiteScrap, viewMinMin]
 modelDeck = ModelDeck()
 modelCredentials = ModelCredentials()
 modelSiteScrap = NONE
@@ -29,10 +34,22 @@ controllerCardListing = NONE
 controllerLogin = NONE
 controllerCardBuy = NONE
 controllerSiteScrap = NONE
-controller = [controllerLogin, controllerCardSearch, controllerCardListing, controllerSiteScrap, controllerCardBuy]
+controllerMinMin = NONE
+controller = [controllerLogin, controllerCardSearch, controllerCardListing, controllerSiteScrap, controllerCardBuy, controllerMinMin]
+
+def minmin():
+    view[4] = ViewMinMin()
+    controller[4] = ControllerMinMin(model[1], view[4])
+    controller[4].view.main_loop()
+    view[4] = NONE
+    controller[4] = NONE
 
 def siteScrap():
-    return
+    view[3] = ViewSiteScrap()
+    controller[3] = ControllerSiteScrap(model[1], view[3])
+    controller[3].view.main_loop()
+    view[3] = NONE
+    controller[3] = NONE
 
 def cardSearch():
     #model[1] = ModelDeck()
@@ -66,10 +83,11 @@ def login():
 if (__name__ == "__main__"):
     # model = Model()
     # start()
-    login()
+    # login()
     cardSearch()
     cardListing()
     siteScrap()
+    minmin()
 
 #viewLogin.main_loop()
 #viewCardSearch.main_loop()

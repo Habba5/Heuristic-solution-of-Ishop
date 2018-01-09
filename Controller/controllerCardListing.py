@@ -78,8 +78,8 @@ class ControllerCardListing(Controller):
             print("Updated card count at index" + str(i) + "to count" + str(count))
 
     def calculate(self):
-        i = 0
-        for expansion in self.expansions:
-            self.model.deck[i].expansions = expansion
-            i += 1
+        #i = 0
+        #for expansion in self.expansions:
+        #    self.model.deck[i].expansions = expansion
+        #    i += 1
         self.view.clear_frame()
