@@ -47,7 +47,7 @@ def minmin():
 def siteScrap():
     view[3] = ViewSiteScrap()
     controller[3] = ControllerSiteScrap(model[1], view[3])
-    controller[3].view.main_loop()
+    #controller[3].view.main_loop()
     view[3] = NONE
     controller[3] = NONE
 
@@ -87,6 +87,7 @@ if (__name__ == "__main__"):
     cardSearch()
     cardListing()
     siteScrap()
+    print("Jo")
     minmin()
 
 #viewLogin.main_loop()

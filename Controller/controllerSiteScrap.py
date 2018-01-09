@@ -153,7 +153,7 @@ class ControllerSiteScrap(Controller):
 
         for card in self.model.deck:
             print(card.offers)
-        self.MinMin()
+        #self.MinMin()
 
     def MinMin(self):
         self.view.clear_frame()

@@ -21,26 +21,32 @@ class ControllerMinMin(Controller):
                     M.append(offer.distributorname)
                     Ni.append(None)
                     X.append(None)
-        for ni in Ni:
+        for nix, ni in enumerate(Ni):
+            #ni = []
+            Ni[nix] = []
             for n in N:
-                ni.append(None)
+                #ni.append(None)
+                Ni[nix].append(None)
+        print(Ni)
         for card in self.model.deck:
             cardname = card.cardname
             cardamount = card.cardamount
             cardurl = card.cardurl
             for offer in card.offers:
-                if Ni[M.index(offer.distributorname)] is None:
+                #if Ni[M.index(offer.distributorname)] is None:
                     Ni[M.index(offer.distributorname)][N.index([cardamount, cardname])] = [cardname, offer.amountaviable, offer.price, offer.id, cardurl, offer.distributorname]
-                else:
-                    Ni[M.index(offer.distributorname)][N.index([cardamount, cardname])].append([cardname, offer.amountaviable, offer.price, offer.id, cardurl, offer.distributorname])
+                #else:
+                    #Ni[M.index(offer.distributorname)][N.index([cardamount, cardname])].append([cardname, offer.amountaviable, offer.price, offer.id, cardurl, offer.distributorname])
                 #Ni.insert(N.index(offer.distributorname), [cardname, offer.amountaviable])
-        while N == [None] * len(N):
+        while N != [None] * len(N):
             i = 0
             min = []
             j_iter = []
             for n in N:
-                min[i] = math.inf
-                j_iter[i] = None
+                #min[i] = math.inf
+                min.append(math.inf)
+                #j_iter[i] = None
+                j_iter.append(None)
                 i += 1
             #min = math.inf
             for m in M:
