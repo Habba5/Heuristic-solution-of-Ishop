@@ -41,6 +41,10 @@ print(newsortlist)
 #sortList.remove(b)
 #sortList.remove(a)
 #print(sortList)
+y = "5,3"
+y = y.replace(",", ".")
+print(float(y))
+
 for a in sortList:
     print("Bin in liste a")
     for b in newsortlist:
