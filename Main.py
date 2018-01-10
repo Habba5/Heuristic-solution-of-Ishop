@@ -10,6 +10,8 @@ from Controller.controllerCardSearch import *
 from Controller.controllerCardListing import *
 from Controller.controllerSiteScrap import *
 from Controller.controllerMinMin import *
+from Controller.controllerAlgorithm import *
+from Controller.controllerBuy import *
 from queue import Queue
 
 
@@ -34,13 +36,19 @@ controllerCardListing = NONE
 controllerLogin = NONE
 controllerCardBuy = NONE
 controllerSiteScrap = NONE
-controllerMinMin = NONE
-controller = [controllerLogin, controllerCardSearch, controllerCardListing, controllerSiteScrap, controllerCardBuy, controllerMinMin]
+controllerAlgorithm = NONE
+controller = [controllerLogin, controllerCardSearch, controllerCardListing, controllerSiteScrap, controllerAlgorithm, controllerCardBuy]
+
+def buying():
+    view[4] = ViewMinMin()
+    controller[5] = ControllerBuy(model[0], model[1], view[4])
+    view[4] = NONE
+    controller[5] = NONE
 
 def minmin():
     view[4] = ViewMinMin()
-    controller[4] = ControllerMinMin(model[1], view[4])
-    controller[4].view.main_loop()
+    controller[4] = ControllerAlgorithm(model[1], view[4])
+    #controller[4].view.main_loop()
     view[4] = NONE
     controller[4] = NONE
 
@@ -89,6 +97,7 @@ if (__name__ == "__main__"):
     siteScrap()
     print("Jo")
     minmin()
+    buying()
 
 #viewLogin.main_loop()
 #viewCardSearch.main_loop()

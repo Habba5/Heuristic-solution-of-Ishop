@@ -1,6 +1,5 @@
 from Controller.controller import *
 from View.viewLogin import *
-from Main import cardSearch
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 

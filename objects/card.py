@@ -9,7 +9,7 @@ class Card(object):
         self.cardname = cardname
         self.cardurl = cardurl
         self.cardlanguage = [Language.Deutsch, Language.Englisch]
-        self.cardcondition = [Condition.Excellent, Condition.Near_Mint, Condition.Mint]
+        self.cardcondition = [Condition.Excellent, Condition.Near_Mint, Condition.Mint, Condition.Played, Condition.Light_Played, Condition.Good, Condition.Poor]
         self.expansions = expansions
         self.id = id
         self.jcppayload = jcppayload

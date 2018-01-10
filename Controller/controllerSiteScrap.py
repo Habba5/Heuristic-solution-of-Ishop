@@ -11,7 +11,7 @@ import re
 import time
 
 MAX_RECONNECT = 4
-MAX_THREADS = 5
+MAX_THREADS = 10
 thread_lock = threading.Lock()
 
 
@@ -63,7 +63,7 @@ class ControllerSiteScrap(Controller):
             url = card.cardurl
             self.message("Url :{}".format(url))
             self.message("Entering while")
-            while hits < 100 and max_pages > page:
+            while hits < 4000 and max_pages > page:
                 self.message("Entered while")
                 args2 = card.id + "," + str(page) + ","
                 args = args1 + args2
@@ -81,7 +81,8 @@ class ControllerSiteScrap(Controller):
                             }
                         )
                         run_post = False
-                    except TimeoutError:
+                    except:
+                        time.sleep(1)
                         pass
                 string = response.text
                 #remove wrapper
@@ -104,7 +105,12 @@ class ControllerSiteScrap(Controller):
                                 sellerlocation = location
                     sellerid = (item.find("td", {"class": "st_price Price"}).div["id"])[5:]
                     price = item.find("td", {"class": "st_price Price"}).div.div.text
+                    price = price.split("€", 1)[0]
+                    price = price[:-1]
+                    price = price.replace(",", ".")
+                    price = float(price)
                     amountaviable = item.find("td", {"class": "st_ItemCount"}).text
+                    amountaviable = int(amountaviable)
                     language = (item.find(href=self.cardlanguage).span["onmouseover"])
                     condition = (item.find(href=self.condition).span["onmouseover"])
                     expansion = (item.find(href=self.cardexpansion).span["onmouseover"])

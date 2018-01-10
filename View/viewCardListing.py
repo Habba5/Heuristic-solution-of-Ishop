@@ -58,7 +58,7 @@ class ViewCardListing(View):
         '''Reset the scroll region to encompass the inner frame'''
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
-    def clickedCalculate(self, location, rating):
+    def clickedCalculate(self):
         self.controller.calculate()
 
     def view(self):
@@ -89,9 +89,9 @@ class ViewCardListing(View):
         variablelocation.trace("w", lambda name, index, mode: self.updatelocation(variablelocation.get()))
 
         # set and trace a variable for the minimum rating of the seller
-        variablerating = StringVar()
-        variablerating.set((self.controller.getSellerRating()).name)  # default value
-        variablerating.trace("w", lambda name, index, mode: self.updaterating(variablerating.get()))
+        # variablerating = StringVar()
+        # variablerating.set((self.controller.getSellerRating()).name)  # default value
+        # variablerating.trace("w", lambda name, index, mode: self.updaterating(variablerating.get()))
 
         # create a list of all options from Enum Location
         locations = []
@@ -99,9 +99,9 @@ class ViewCardListing(View):
             locations.append(location.name)
 
         # create a list of all options from Enum SellerRating
-        ratings = []
-        for rating in SellerRating:
-            ratings.append(rating.name)
+        # ratings = []
+        # for rating in SellerRating:
+        #     ratings.append(rating.name)
 
         # create a list of all options from Enum
         languages = []
@@ -123,15 +123,15 @@ class ViewCardListing(View):
         lbl4 = Label(newframe, text="Sprache")
         lbl4.grid(row=0, column=3, sticky="nsew", padx=5, pady=5)
         lbl5 = Label(newframe, text="Ihr Standort")
-        lbl5.grid(row=50, column=0, sticky="nsew", padx=5, pady=5)
+        lbl5.grid(row=500, column=0, sticky="nsew", padx=5, pady=5)
         menulocation = OptionMenu(newframe, variablelocation, *locations)
-        menulocation.grid(row=51, column=0, sticky="nsew", padx=5, pady=5)
-        lbl6 = Label(newframe, text="Verkäufer Mindestbewertung")
-        lbl6.grid(row=52, column=0, sticky="nsew", padx=5, pady=5)
-        menurating = OptionMenu(newframe, variablerating, *ratings)
-        menurating.grid(row=53, column=0, sticky="nsew", padx=5, pady=5)
-        btn = Button(newframe, text="Preis berechnen", command=lambda: self.clickedCalculate(variablelocation, variablerating))
-        btn.grid(row=54, sticky="w", column=0, padx=5, pady=5)
+        menulocation.grid(row=501, column=0, sticky="nsew", padx=5, pady=5)
+        #lbl6 = Label(newframe, text="Verkäufer Mindestbewertung")
+        #lbl6.grid(row=502, column=0, sticky="nsew", padx=5, pady=5)
+        # menurating = OptionMenu(newframe, variablerating, *ratings)
+        # menurating.grid(row=53, column=0, sticky="nsew", padx=5, pady=5)
+        btn = Button(newframe, text="Preis berechnen", command=lambda: self.clickedCalculate())
+        btn.grid(row=504, sticky="w", column=0, padx=5, pady=5)
 
         # ToDo Make row dependent on deck length
         deck = self.controller.getDeck()

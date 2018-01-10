@@ -1,5 +1,17 @@
+class Foo(object):
+    def __init__(self, name):
+        self.name = name
+
 aList = [["blubb1",[4, 3]], ["blubb2", 5]]
-bList = [None, None, None]
+bList = [None, None]
+a = Foo("erster")
+a.price = 7.3
+b = Foo("zweiter")
+b.price = 5.2
+c = Foo("dritter")
+c.price = 9
+otherList = []
+sortList = [a,b,c]
 #i = 0
 #while i < 10:
 #    aList.append(None)
@@ -9,6 +21,8 @@ bList = [None, None, None]
 print(aList[0][1][0])
 print(aList)
 print(4 - 5)
+if otherList.__len__() == 0:
+    print("Jo, is leer")
 if bList is None:
     print("Hallo")
 #bList[0][0] = "1"
@@ -22,3 +36,27 @@ for blisti, b in enumerate(bList):
 print(bList)
 if bList == [None] * len(bList):
     print("Hallo")
+print(sortList)
+for a in sortList:
+    print(a.name + " " + str(a.price))
+sortList.sort(key=lambda x: x.price, reverse=False)
+print(sortList)
+print(sortList.__len__())
+for a in sortList:
+    print(a.name + " " + str(a.price))
+print(any(x.name == "zweiter" for x in sortList))
+newsortlist = [x for x in sortList if x.name == "erster" or x.name == "zweiter"]
+print(newsortlist)
+#sortList.remove(b)
+#sortList.remove(a)
+#print(sortList)
+y = "5,3"
+y = y.replace(",", ".")
+print(float(y))
+
+for a in sortList:
+    print("Bin in liste a")
+    for b in newsortlist:
+        if b.name == "zweiter":
+            break
+        print("Treffer")
