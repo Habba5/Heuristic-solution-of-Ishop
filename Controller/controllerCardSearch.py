@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import re
 
 
-MAX_THREADS = 5
+MAX_THREADS = 10
 thread_lock = threading.Lock()
 
 
@@ -36,7 +36,7 @@ class ControllerCardSearch(Controller):
     def replace(self, string):
         string = string.replace(' ', '+')
         string = string.replace(',', '%2C')
-        string = string.replace('//', '%2F')
+        string = string.replace('/', '%2F')
         string = string.replace(':', '%3A')
         string = string.replace('\'', '%27')
         return string

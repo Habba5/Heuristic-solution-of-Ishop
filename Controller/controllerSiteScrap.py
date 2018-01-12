@@ -9,9 +9,10 @@ import base64
 from bs4 import BeautifulSoup
 import re
 import time
+import sys, os
 
 MAX_RECONNECT = 4
-MAX_THREADS = 10
+MAX_THREADS = 100
 thread_lock = threading.Lock()
 
 
@@ -20,6 +21,12 @@ class ControllerSiteScrap(Controller):
     def __init__(self, model, view):
         super().__init__(model, view)
         self.collectOffers()
+
+    def blockPrint(self):
+        sys.stdout = open(os.devnull, 'w')
+
+    def enablePrint(self):
+        sys.stdout = sys.__stdout__
 
     def message(self, s):
         print('{}: {}'.format(threading.current_thread().name, s))
@@ -145,7 +152,7 @@ class ControllerSiteScrap(Controller):
 
     def collectOffers(self):
         queue = Queue()
-
+        self.blockPrint()
         for card in self.model.deck:
             queue.put(card, self.model.sellerrating)
 
@@ -160,6 +167,8 @@ class ControllerSiteScrap(Controller):
 
         self.message('*** main thread waiting')
         queue.join()
+
+        self.enablePrint()
 
         for card in self.model.deck:
             print(card.offers)

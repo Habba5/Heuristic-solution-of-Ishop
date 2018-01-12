@@ -39,7 +39,13 @@ class ControllerBuy(Controller):
                     break
                 except UnexpectedAlertPresentException as e:
                     print(e)
-                    time.sleep(2)
+                    if(str(e).find("nicht zum Kauf verfügbar") != -1):
+                        print("Konnte disen Artikel nicht finden: " + item.distributorname + " Anzahl: " + str(item.amountaviable) + " Preis pro Karte: " + str(item.price))
+                        time.sleep(5)
+                        browser.switch_to.alert.accept()
+                        browser.switch_to.default_content()
+                        break
+                    time.sleep(5)
                     browser.switch_to.alert.accept()
                     browser.switch_to.default_content()
                     pass
