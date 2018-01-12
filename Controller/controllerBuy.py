@@ -30,7 +30,7 @@ class ControllerBuy(Controller):
         shopping_list = self.model.shopping_list
         for item in shopping_list:
             while True:
-                time.sleep(1)
+                time.sleep(2)
                 try:
                     id = item.id
                     amount = item.amountaviable
@@ -39,7 +39,7 @@ class ControllerBuy(Controller):
                     break
                 except UnexpectedAlertPresentException as e:
                     print(e)
-                    time.sleep()
+                    time.sleep(2)
                     browser.switch_to.alert.accept()
                     browser.switch_to.default_content()
                     pass

@@ -63,7 +63,7 @@ class ControllerSiteScrap(Controller):
             url = card.cardurl
             self.message("Url :{}".format(url))
             self.message("Entering while")
-            while hits < 4000 and max_pages > page:
+            while hits < 100 and max_pages > page:
                 self.message("Entered while")
                 args2 = card.id + "," + str(page) + ","
                 args = args1 + args2
@@ -104,11 +104,15 @@ class ControllerSiteScrap(Controller):
                             if self.findWord(location.name.replace("_", " "))(string) is not None:
                                 sellerlocation = location
                     sellerid = (item.find("td", {"class": "st_price Price"}).div["id"])[5:]
+                    playset = False
                     price = item.find("td", {"class": "st_price Price"}).div.div.text
-                    price = price.split("€", 1)[0]
+                    price_temp = price.split("€", 1)
+                    price = price_temp[0]
                     price = price[:-1]
                     price = price.replace(",", ".")
                     price = float(price)
+                    if str(price_temp[1]).find("Stk") != -1 or str(price_temp[1]).find("PPU") != -1:
+                        playset = True
                     amountaviable = item.find("td", {"class": "st_ItemCount"}).text
                     amountaviable = int(amountaviable)
                     language = (item.find(href=self.cardlanguage).span["onmouseover"])
@@ -131,7 +135,7 @@ class ControllerSiteScrap(Controller):
                                 expansion_hit = True
                     if condition_hit and language_hit and expansion_hit:
                         thread_lock.acquire()
-                        card.addoffer(seller, price, sellerid, sellerlocation, amountaviable)
+                        card.addoffer(seller, price, sellerid, sellerlocation, amountaviable, playset)
                         self.message("Currently on Hit:{}".format(hits))
                         hits += 1
                         thread_lock.release()

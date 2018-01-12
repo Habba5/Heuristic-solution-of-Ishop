@@ -4,8 +4,8 @@ from Model.model import *
 class ModelCredentials(Model):
 
     def __init__(self):
-        self.username = ""
-        self.password = ""
+        self.username = "Habba5"
+        self.password = "496257abdr?"
         #self.deck = None
         super().__init__()
 
