@@ -1,4 +1,5 @@
 from Controller.controller import *
+import math
 
 class ControllerAlgorithm(Controller):
 
@@ -274,7 +275,10 @@ class ControllerAlgorithm(Controller):
                         usable_sequence.append(usable_item)
                         amount_satisfied += max_amount_usable_item
                     else:
-                        usable_item.amountaviable = amount_to_Satisfy - amount_satisfied
+                        if usable_item.playset:
+                            usable_item.amountaviable = int(math.ceil((amount_to_Satisfy - amount_satisfied)/4))
+                        else:
+                            usable_item.amountaviable = amount_to_Satisfy - amount_satisfied
                         amount_satisfied = amount_to_Satisfy
                         usable_sequence.append(usable_item)
             shopping_list.extend(usable_sequence)
@@ -331,18 +335,30 @@ class ControllerAlgorithm(Controller):
                                         if not any(x.distributorname == seq.distributorname for x in
                                                    current_sequence_card):
                                             max_amount_for_seq = 0
-                                            if (seq.amountaviable < amount_to_Satisfy):
-                                                max_amount_for_seq = seq.amountaviable
+                                            total_price_distributor = 0
+                                            if seq.playset:
+                                                if seq.amountaviable * 4 < amount_to_Satisfy:
+                                                    max_amount_for_seq = seq.amountaviable * 4
+                                                else:
+                                                    max_amount_for_seq = amount_to_Satisfy
+                                                total_price_distributor = max_amount_for_seq * float(seq.price) / float(
+                                                    4)
                                             else:
-                                                max_amount_for_seq = amount_to_Satisfy
-                                            total_price_distributor = max_amount_for_seq * seq.price
-                                            if offer.price < self.calculateShipping(seq.location, location,
+                                                if (seq.amountaviable < amount_to_Satisfy):
+                                                    max_amount_for_seq = seq.amountaviable
+                                                else:
+                                                    max_amount_for_seq = amount_to_Satisfy
+                                                total_price_distributor = max_amount_for_seq * seq.price
+                                            offer_playset_mutator = 1
+                                            if offer.playset:
+                                                offer_playset_mutator = 4
+                                            if float(offer.price) / float(offer_playset_mutator) < self.calculateShipping(seq.location, location,
                                                                                     max_amount_for_seq,
                                                                                     total_price_distributor):
-                                                amount_without_seq = amount_in_sequence - seq.amountaviable
+                                                amount_without_seq = amount_in_sequence - max_amount_for_seq
                                                 # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                                 # , so entferne das Angebot aus seq und tausche es durch das neue aus
-                                                if amount_without_seq + offer.amountaviable >= amount_to_Satisfy:
+                                                if amount_without_seq + offer.amountaviable * offer_playset_mutator >= amount_to_Satisfy:
                                                     current_sequence_card.remove(seq)
                                                     current_sequence_card.append(offer)
                                                     # Unschön, aber nach dem Austausch brauch man nicht mehr weiter suchen
@@ -358,24 +374,40 @@ class ControllerAlgorithm(Controller):
                                     # Falls dieser Distributor nicht auch schon einmal vorkam, so wird verglichen, ansonsten wird es wahscheinlich nicht günstiger
                                     if not any(x.distributorname == seq.distributorname for x in current_sequence_card):
                                         max_amount_for_seq = 0
-                                        if (seq.amountaviable < amount_to_Satisfy):
-                                            max_amount_for_seq = seq.amountaviable
+                                        total_price_seq = 0
+                                        if seq.playset:
+                                            if seq.amountaviable * 4 < amount_to_Satisfy:
+                                                max_amount_for_seq = seq.amountaviable * 4
+                                            else:
+                                                max_amount_for_seq = amount_to_Satisfy
+                                            total_price_seq = max_amount_for_seq * float(seq.price) / float(4)
                                         else:
-                                            max_amount_for_seq = amount_to_Satisfy
+                                            if (seq.amountaviable < amount_to_Satisfy):
+                                                max_amount_for_seq = seq.amountaviable
+                                            else:
+                                                max_amount_for_seq = amount_to_Satisfy
+                                            total_price_seq = max_amount_for_seq * seq.price
                                         max_amount_for_offer = 0
-                                        if (offer.amountaviable < amount_to_Satisfy):
-                                            max_amount_for_seq = offer.amountaviable
+                                        total_price_offer = 0
+                                        if offer.playset:
+                                            if offer.amountaviable * 4 < amount_to_Satisfy:
+                                                max_amount_for_offer = offer.amountaviable * 4
+                                            else:
+                                                max_amount_for_offer = amount_to_Satisfy
+                                            total_price_offer = max_amount_for_offer * float(offer.price) / float(4)
                                         else:
-                                            max_amount_for_seq = amount_to_Satisfy
-                                        total_price_seq = max_amount_for_seq * seq.price
-                                        total_price_offer = max_amount_for_offer * offer.price
+                                            if (offer.amountaviable < amount_to_Satisfy):
+                                                max_amount_for_offer = offer.amountaviable
+                                            else:
+                                                max_amount_for_offer = amount_to_Satisfy
+                                            total_price_offer = max_amount_for_offer * offer.price
                                         if self.calculateShipping(offer.location, location, max_amount_for_offer,
                                                                   total_price_offer) < self.calculateShipping(
                                                 seq.location, location, max_amount_for_seq, total_price_seq):
-                                            amount_without_seq = amount_in_sequence - seq.amountaviable
+                                            amount_without_seq = amount_in_sequence - max_amount_for_seq
                                             # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                             # , so entferne das Angebot aus seq und tausche es durch das neue aus
-                                            if amount_without_seq + offer.amountaviable >= amount_to_Satisfy:
+                                            if amount_without_seq + max_amount_for_offer >= amount_to_Satisfy:
                                                 current_sequence_card.remove(seq)
                                                 current_sequence_card.append(offer)
                                                 # Unschön, aber nach dem Austausch brauch man nicht mehr weiter suchen
@@ -399,18 +431,30 @@ class ControllerAlgorithm(Controller):
                                                     current_sequence_card) or any(
                                                     x.distributorname == seq.distributorname for x in shopping_list)):
                                             max_amount_for_seq = 0
-                                            if (seq.amountaviable < amount_to_Satisfy):
-                                                max_amount_for_seq = seq.amountaviable
+                                            total_price_distributor = 0
+                                            if seq.playset:
+                                                if seq.amountaviable * 4 < amount_to_Satisfy:
+                                                    max_amount_for_seq = seq.amountaviable * 4
+                                                else:
+                                                    max_amount_for_seq = amount_to_Satisfy
+                                                total_price_distributor = max_amount_for_seq * float(seq.price) / float(
+                                                    4)
                                             else:
-                                                max_amount_for_seq = amount_to_Satisfy
-                                            total_price_distributor = max_amount_for_seq * seq.price
-                                            if offer.price < self.calculateShipping(seq.location, location,
+                                                if (seq.amountaviable < amount_to_Satisfy):
+                                                    max_amount_for_seq = seq.amountaviable
+                                                else:
+                                                    max_amount_for_seq = amount_to_Satisfy
+                                                total_price_distributor = max_amount_for_seq * seq.price
+                                            offer_playset_mutator = 1
+                                            if offer.playset:
+                                                offer_playset_mutator = 4
+                                            if float(offer.price)/float(offer_playset_mutator) < self.calculateShipping(seq.location, location,
                                                                                     max_amount_for_seq,
                                                                                     total_price_distributor):
-                                                amount_without_seq = amount_in_sequence - seq.amountaviable
+                                                amount_without_seq = amount_in_sequence - max_amount_for_seq
                                                 # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                                 # , so entferne das Angebot aus seq und tausche es durch das neue aus
-                                                if amount_without_seq + offer.amountaviable >= amount_to_Satisfy:
+                                                if amount_without_seq + offer.amountaviable * offer_playset_mutator >= amount_to_Satisfy:
                                                     current_sequence_card.remove(seq)
                                                     current_sequence_card.append(offer)
                                                     # Unschön, aber nach dem Austausch brauch man nicht mehr weiter suchen
@@ -428,24 +472,41 @@ class ControllerAlgorithm(Controller):
                                                 current_sequence_card) or any(
                                                 x.distributorname == seq.distributorname for x in shopping_list)):
                                         max_amount_for_seq = 0
-                                        if (seq.amountaviable < amount_to_Satisfy):
-                                            max_amount_for_seq = seq.amountaviable
+                                        total_price_seq = 0
+                                        if seq.playset:
+                                            if seq.amountaviable * 4 < amount_to_Satisfy:
+                                                max_amount_for_seq = seq.amountaviable * 4
+                                            else:
+                                                max_amount_for_seq = amount_to_Satisfy
+                                            total_price_seq = max_amount_for_seq * float(seq.price) / float(4)
                                         else:
-                                            max_amount_for_seq = amount_to_Satisfy
+                                            if (seq.amountaviable < amount_to_Satisfy):
+                                                max_amount_for_seq = seq.amountaviable
+                                            else:
+                                                max_amount_for_seq = amount_to_Satisfy
+                                            total_price_seq = max_amount_for_seq * seq.price
                                         max_amount_for_offer = 0
-                                        if (offer.amountaviable < amount_to_Satisfy):
-                                            max_amount_for_seq = offer.amountaviable
+                                        total_price_offer = 0
+                                        if offer.playset:
+                                            if offer.amountaviable * 4 < amount_to_Satisfy:
+                                                max_amount_for_offer = offer.amountaviable * 4
+                                            else:
+                                                max_amount_for_offer = amount_to_Satisfy
+                                            total_price_offer = max_amount_for_offer * float(offer.price) / float(4)
                                         else:
-                                            max_amount_for_seq = amount_to_Satisfy
-                                        total_price_seq = max_amount_for_seq * seq.price
-                                        total_price_offer = max_amount_for_offer * offer.price
+                                            if (offer.amountaviable < amount_to_Satisfy):
+                                                max_amount_for_offer = offer.amountaviable
+                                            else:
+                                                max_amount_for_offer = amount_to_Satisfy
+                                            total_price_offer = max_amount_for_offer * offer.price
+
                                         if self.calculateShipping(offer.location, location, max_amount_for_offer,
                                                                   total_price_offer) < self.calculateShipping(
                                                 seq.location, location, max_amount_for_seq, total_price_seq):
-                                            amount_without_seq = amount_in_sequence - seq.amountaviable
+                                            amount_without_seq = amount_in_sequence - max_amount_for_seq
                                             # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                             # , so entferne das Angebot aus seq und tausche es durch das neue aus
-                                            if amount_without_seq + offer.amountaviable >= amount_to_Satisfy:
+                                            if amount_without_seq + max_amount_for_offer >= amount_to_Satisfy:
                                                 current_sequence_card.remove(seq)
                                                 current_sequence_card.append(offer)
                                                 # Unschön, aber nach dem Austausch brauch man nicht mehr weiter suchen
@@ -463,14 +524,19 @@ class ControllerAlgorithm(Controller):
             if shopping_list.__len__() == 0:
                 for index, item in enumerate(current_sequence_card):
                     hits = self.amountofdistributor(current_sequence_card, item.distributorname)
-                    if item.amountaviable < amount_to_Satisfy:
+                    max_amount_item = 0
+                    if item.playset:
+                        max_amount_item = item.amountaviable * 4
+                    else:
+                        max_amount_item = item.amountaviable
+                    if max_amount_item < amount_to_Satisfy:
                         mutator = 1
                         if hits > 0:
                             mutator = float(1) / float((1 + hits))
                         price_per_card = 0
-                        shipping = self.calculateShipping(item.location, location, item.amountaviable,
-                                                          (item.amountaviable * item.price)) * mutator
-                        price_per_card = (float(shipping) / float(item.amountaviable)) + item.price
+                        shipping = self.calculateShipping(item.location, location, max_amount_item,
+                                                          (max_amount_item * item.price)) * mutator
+                        price_per_card = (float(shipping) / float(max_amount_item)) + item.price
                         current_sequence_card[index].overall_price_per_card = price_per_card
                     else:
                         mutator = 1
@@ -484,7 +550,12 @@ class ControllerAlgorithm(Controller):
             else:
                 for index, item in enumerate(current_sequence_card):
                     hits = self.amountofdistributor(current_sequence_card, item.distributorname)
-                    if item.amountaviable < amount_to_Satisfy:
+                    max_amount_item = 0
+                    if item.playset:
+                        max_amount_item = item.amountaviable * 4
+                    else:
+                        max_amount_item = item.amountaviable
+                    if max_amount_item < amount_to_Satisfy:
                         if any(x.distributorname == item.distributorname for x in shopping_list):
                             current_sequence_card[index].overall_price_per_card = current_sequence_card[index].price
                         else:
@@ -492,9 +563,9 @@ class ControllerAlgorithm(Controller):
                             if hits > 0:
                                 mutator = float(1) / float((1 + hits))
                             price_per_card = 0
-                            shipping = self.calculateShipping(item.location, location, item.amountaviable,
-                                                              (item.amountaviable * item.price)) * mutator
-                            price_per_card = (shipping / item.amountaviable) + item.price
+                            shipping = self.calculateShipping(item.location, location, max_amount_item,
+                                                              (max_amount_item * item.price)) * mutator
+                            price_per_card = (shipping / max_amount_item) + item.price
                             current_sequence_card[index].overall_price_per_card = price_per_card
                     else:
                         if any(x.distributorname == item.distributorname for x in shopping_list):
@@ -514,15 +585,30 @@ class ControllerAlgorithm(Controller):
                 if amount_satisfied == amount_to_Satisfy:
                     break
                 else:
-                    if (amount_satisfied + usable_item.amountaviable) < amount_to_Satisfy:
-                        usable_sequence.append(usable_item)
-                        amount_satisfied += usable_item.amountaviable
+                    max_amount_usable_item = 0
+                    if usable_item.playset:
+                        max_amount_usable_item = usable_item.amountaviable * 4
                     else:
-                        usable_item.amountaviable = amount_to_Satisfy - amount_satisfied
+                        max_amount_usable_item = usable_item.amountaviable
+                    if (amount_satisfied + max_amount_usable_item) < amount_to_Satisfy:
+                        usable_sequence.append(usable_item)
+                        amount_satisfied += max_amount_usable_item
+                    else:
+                        if usable_item.playset:
+                            usable_item.amountaviable = int(math.ceil((amount_to_Satisfy - amount_satisfied)/4))
+                        else:
+                            usable_item.amountaviable = amount_to_Satisfy - amount_satisfied
                         amount_satisfied = amount_to_Satisfy
                         usable_sequence.append(usable_item)
             shopping_list.extend(usable_sequence)
         return shopping_list
+
+    def eval_cost(self, shopping_list, location):
+        buyer_list = []
+        for item in shopping_list:
+            if not any(x for x in buyer_list if x == item.distributorname):
+                buyer_list.append(item.distributorname)
+        
 
     def searchAlgorithm(self):
         # deck variable
@@ -546,6 +632,6 @@ class ControllerAlgorithm(Controller):
             #if last_distributor != item.distributorname:
                 #shipping_temp = 0
             price_overall += item.overall_price_per_card
-            print("Händler: " + item.distributorname + " Preis pro Karte: " + str(item.price) + " Anzahl der Karten: " + str(item.amountaviable)+ " Kartenname: " + item.cardname)
+            print("Händler: " + item.distributorname + " Preis pro Karte: " + str(item.price) + " Anzahl der Karten: " + str(item.amountaviable)+ " Kartenname: " + item.cardname + " Playset: " + str(item.playset))
         print(price_overall)
         self.model.shopping_list = shopping_list
