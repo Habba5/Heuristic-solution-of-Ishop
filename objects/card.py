@@ -46,5 +46,5 @@ class Card(object):
     def totaloffers(self):
         return self.totaloffers
 
-    def addoffer(self, distributorname, price, id, location, amountaviable):
-        self.offers.append(Offer(distributorname, price, id, location, amountaviable))
+    def addoffer(self, distributorname, price, id, location, amountaviable, playset):
+        self.offers.append(Offer(distributorname, price, id, location, amountaviable, playset))

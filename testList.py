@@ -21,6 +21,9 @@ sortList = [a,b,c]
 print(aList[0][1][0])
 print(aList)
 print(4 - 5)
+for a in sortList:
+    a.nutte = 4
+print(sortList[0].nutte)
 if otherList.__len__() == 0:
     print("Jo, is leer")
 if bList is None:

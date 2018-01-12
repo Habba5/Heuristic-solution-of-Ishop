@@ -2,6 +2,7 @@ from Controller.controller import *
 from View.viewLogin import *
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from Main import cardSearch
 
 
 class ControllerLogin(Controller):
@@ -45,5 +46,8 @@ class ControllerLogin(Controller):
             pass
 
     def cardSearch(self):
+        #self.view.parent.quit()
+        #self.view.parent.destroy()
+        #self.view.clear_screen()
         self.view.clear_frame()
         #cardSearch()

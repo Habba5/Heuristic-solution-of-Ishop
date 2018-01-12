@@ -76,6 +76,7 @@ class ControllerCardSearch(Controller):
 
 
     def searchCards(self, cards):
+        time.sleep(5)
         buf = io.StringIO(cards)
         # wrongcards = []
         listcard = []
