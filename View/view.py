@@ -8,6 +8,9 @@ class View(object):
         self.initialise_ui()
         self.controller = None
 
+    def clear_frame_else(self):
+        self.parent.destroy()
+
     def clear_frame(self):
         self.parent.quit()
         self.parent.destroy()

@@ -82,6 +82,12 @@ def login():
     view[0] = ViewLogin()
     controller[0] = ControllerLogin(model[0], view[0])
     controller[0].view.main_loop()
+    #controller[0].view.clear_frame()
+    #view[0].parent.quit()
+    #del view[0]
+    #del controller[0]
+    #view.remove(view[0])
+    #controller.remove(controller[0])
     view[0] = NONE
     controller[0] = NONE
     #controllerLogin = ControllerLogin(model)
@@ -91,7 +97,7 @@ def login():
 if (__name__ == "__main__"):
     # model = Model()
     # start()
-    # login()
+    login()
     cardSearch()
     cardListing()
     siteScrap()
