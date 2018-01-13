@@ -5,7 +5,7 @@ import threading
 import random
 import copy
 
-MAX_NO_IMPROVE = 20
+MAX_NO_IMPROVE = 200
 CHANGE_VALUE = 0.5
 MAX_THREADS = 5
 thread_lock = threading.Lock()
@@ -756,7 +756,7 @@ class ControllerAlgorithm(Controller):
         self.message('*** main thread waiting')
         queue.join()
         ind = 0
-        while ind < 10:
+        while ind < 100:
             for i in range(MAX_THREADS):
                 queue.put(copy.deepcopy(self.best_solution))
             self.message('*** main thread waiting')
