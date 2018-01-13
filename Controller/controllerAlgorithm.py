@@ -1,11 +1,92 @@
 from Controller.controller import *
 import math
+from queue import *
+import threading
+import random
+
+MAX_NO_IMPROVE = 10
+CHANGE_VALUE = 0.5
+MAX_THREADS = 5
+thread_lock = threading.Lock()
 
 class ControllerAlgorithm(Controller):
 
     def __init__(self, model, view):
         super().__init__(model, view)
+        self.best_solution = []
         self.searchAlgorithm()
+
+    def message(self, s):
+        print('{}: {}'.format(threading.current_thread().name, s))
+
+    def mutator(self, q, deck_orig, location):
+        #shopping_list = q
+        while True:
+            deck = deck_orig
+            self.message('looking for the next enclosure')
+            shopping_list = q.get()
+            no_improve = 0
+            while no_improve < MAX_NO_IMPROVE:
+                new_shopping_list = self.random_order(shopping_list, deck, int(len(shopping_list) * CHANGE_VALUE))
+                new_shopping_list = self.local_search(deck, location, new_shopping_list)
+                if self.eval_cost(new_shopping_list, location) < self.eval_cost(shopping_list, location):
+                    self.message('Found better Solution')
+                    shopping_list = new_shopping_list
+                    no_improve = 0
+                else:
+                    no_improve += 1
+            thread_lock.acquire()
+            if self.eval_cost(shopping_list, location) < self.eval_cost(self.best_solution, location):
+                self.best_solution = shopping_list
+            thread_lock.release()
+            q.task_done()
+
+    def random_order(self, shopping_list, deck, change_value):
+        random.seed()
+        shopping_list_new = []
+        length = len(shopping_list)
+        random_indexes = random.sample(range(0, length-1), change_value)
+        for i, offer_shopping_list in enumerate(shopping_list):
+            if not any(x == i for x in random_indexes):
+                shopping_list_new.append(offer_shopping_list)
+        for index in random_indexes:
+            name = shopping_list[index].cardname
+            #print(name)
+            item = None
+            item = next([x for x in deck if x.cardname == name], None)
+            #item = [x for x in deck if x.cardname == name]
+            #item = item[0]
+            if len(item.offers) == 0:
+                print("Hier geflooogen :" + name + item.cardname)
+            #length_offers = len(item.offers)
+            max_amount_to_satisfy = 0
+            if shopping_list[index].playset:
+                max_amount_to_satisfy = shopping_list[index].amountaviable * 4
+            else:
+                max_amount_to_satisfy = shopping_list[index].amountaviable
+            amount_satisfied = 0
+            while amount_satisfied < max_amount_to_satisfy:
+                if len(item.offers) == 0:
+                    print("Hier geflooogen 2 :" + name + item.cardname)
+                try:
+                    offer = random.choice(item.offers)
+                except:
+                    print(item)
+                    print(item.cardname)
+                    print(item.offers)
+                    print(name)
+                    for card in deck:
+                        print(card.cardname)
+                offer.cardname = name
+                if not any(x.id == offer.id for x in shopping_list_new):
+                    max_amount_offer = 0
+                    if offer.playset:
+                        max_amount_offer = offer.amountaviable * 4
+                    else:
+                        max_amount_offer = offer.amountaviable
+                    shopping_list_new.append(offer)
+                    amount_satisfied += max_amount_offer
+        return shopping_list_new
 
     def amountofdistributor(self, list, name):
         hits = 0
@@ -36,23 +117,24 @@ class ControllerAlgorithm(Controller):
         # bei höheren Preisen ist Gewicht vernachlässigbar
         if totalprice <= 25:
             if amount <= 4:
-                return default_price_20g
+                return default_price_20g + totalprice
             elif amount < 18:
-                return default_price_50g
+                return default_price_50g + totalprice
             else:
-                return default_price_500g
+                return default_price_500g + totalprice
         elif totalprice <= 50:
-            return between25_50_price
+            return between25_50_price + totalprice
         elif totalprice <= 100:
-            return between50_100_price
+            return between50_100_price + totalprice
         elif totalprice <= 500:
-            return between100_500price
+            return between100_500price + totalprice
         else:
-            return between500_2500price
+            return between500_2500price + totalprice
 
-    def local_search(self, deck, location, shopping_list_old):
+    def local_search(self, deck_orig, location, shopping_list_old):
         shopping_list = shopping_list_old
         # Gehe alle Karten durch
+        deck = deck_orig
         for card in deck:
             # Sequenz für die momentanen Karten
             current_sequence_card = []
@@ -284,8 +366,9 @@ class ControllerAlgorithm(Controller):
             shopping_list.extend(usable_sequence)
         return shopping_list
 
-    def minminSearch(self, deck, location):
+    def minminSearch(self, deck_orig, location):
         shopping_list = []
+        deck = deck_orig
         # Gehe alle Karten durch
         for card in deck:
             # Sequenz für die momentanen Karten
@@ -604,13 +687,46 @@ class ControllerAlgorithm(Controller):
         return shopping_list
 
     def eval_cost(self, shopping_list, location):
+        shopping_list.sort(key=lambda x: x.distributorname, reverse=False)
         buyer_list = []
+        temp_buyer = ""
+        temp_location = None
+        temp_amount = 0
+        temp_price = 0
+        overall_price = 0
         for item in shopping_list:
-            if not any(x for x in buyer_list if x == item.distributorname):
-                buyer_list.append(item.distributorname)
-        
+            if temp_buyer == "":
+                temp_buyer = item.distributorname
+                temp_location = item.location
+                if item.playset:
+                    temp_amount = item.amountaviable * 4
+                else:
+                    temp_amount = item.amountaviable
+                temp_price = temp_amount * item.price
+            else:
+                if temp_buyer != item.distributorname:
+                    overall_price += self.calculateShipping(temp_location, location, temp_amount, temp_price)
+                    temp_location = item.location
+                    temp_buyer = item.distributorname
+                    if item.playset:
+                        temp_amount = item.amountaviable * 4
+                    else:
+                        temp_amount = item.amountaviable
+                    temp_price = temp_amount * item.price
+                else:
+                    temp = 0
+                    if item.playset:
+                        temp = item.amountaviable * 4
+                        temp_amount += temp
+                    else:
+                        temp = item.amountaviable
+                        temp_amount += temp
+                    temp_price += temp * item.price
+        overall_price += self.calculateShipping(temp_location, location, temp_amount, temp_price)
+        return overall_price
 
     def searchAlgorithm(self):
+        queue = Queue()
         # deck variable
         deck = self.model.deck
         # standort
@@ -620,18 +736,46 @@ class ControllerAlgorithm(Controller):
         shopping_list = self.minminSearch(deck, location)
         shopping_list = self.local_search(deck, location, shopping_list)
         shopping_list.sort(key=lambda x: x.distributorname, reverse=False)
+        self.best_solution = shopping_list
         price_overall = 0
+        new_price_overall = self.eval_cost(shopping_list, location)
+        change_value = 0
+        for i in range(MAX_THREADS):
+            queue.put(self.best_solution)
+        for i in range(MAX_THREADS):
+            worker = threading.Thread(
+                target=self.mutator,
+                args=(queue, deck, location),
+                name='worker-{}'.format(i),
+            )
+            worker.setDaemon(True)
+            worker.start()
+        self.message('*** main thread waiting')
+        queue.join()
+        i = 0
+        while i < 100:
+            for i in range(MAX_THREADS):
+                queue.put(self.best_solution)
+            self.message('*** main thread waiting')
+            queue.join()
+            i += 1
+
+
         shipping_overall = 0
         amount_temp = 0
         shipping_temp = 0
         price_temp = 0
         last_distributor = ""
-        for item in shopping_list:
+        for item in self.best_solution:
             #if last_distributor == "":
                 #last_distributor = item.distributorname
             #if last_distributor != item.distributorname:
                 #shipping_temp = 0
-            price_overall += item.overall_price_per_card
+            #price_overall += item.overall_price_per_card
             print("Händler: " + item.distributorname + " Preis pro Karte: " + str(item.price) + " Anzahl der Karten: " + str(item.amountaviable)+ " Kartenname: " + item.cardname + " Playset: " + str(item.playset))
-        print(price_overall)
+        #print(price_overall)
+        print(new_price_overall)
+        print(self.eval_cost(self.best_solution, location))
+        #new_list = self.random_order(shopping_list, deck, int(len(shopping_list)/2))
+        #print(self.eval_cost(new_list, location))
         self.model.shopping_list = shopping_list

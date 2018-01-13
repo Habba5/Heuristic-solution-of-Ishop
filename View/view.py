@@ -4,6 +4,7 @@ from tkinter import *
 class View(object):
     def __init__(self):
         self.parent = Tk()
+        #self.parent = tk
         self.parent.title("Einkaufshelfer für magickartenmarkt.de")
         self.initialise_ui()
         self.controller = None
