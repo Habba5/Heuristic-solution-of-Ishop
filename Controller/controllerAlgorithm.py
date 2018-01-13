@@ -3,6 +3,7 @@ import math
 from queue import *
 import threading
 import random
+import copy
 
 MAX_NO_IMPROVE = 10
 CHANGE_VALUE = 0.5
@@ -27,7 +28,9 @@ class ControllerAlgorithm(Controller):
             shopping_list = q.get()
             no_improve = 0
             while no_improve < MAX_NO_IMPROVE:
+                thread_lock.acquire()
                 new_shopping_list = self.random_order(shopping_list, deck, int(len(shopping_list) * CHANGE_VALUE))
+                thread_lock.release()
                 new_shopping_list = self.local_search(deck, location, new_shopping_list)
                 if self.eval_cost(new_shopping_list, location) < self.eval_cost(shopping_list, location):
                     self.message('Found better Solution')
@@ -53,7 +56,7 @@ class ControllerAlgorithm(Controller):
             name = shopping_list[index].cardname
             #print(name)
             item = None
-            item = next([x for x in deck if x.cardname == name], None)
+            item = next((x for x in deck if x.cardname == name), None)
             #item = [x for x in deck if x.cardname == name]
             #item = item[0]
             if len(item.offers) == 0:
@@ -745,7 +748,7 @@ class ControllerAlgorithm(Controller):
         for i in range(MAX_THREADS):
             worker = threading.Thread(
                 target=self.mutator,
-                args=(queue, deck, location),
+                args=(queue, copy.deepcopy(self.model.deck), location),
                 name='worker-{}'.format(i),
             )
             worker.setDaemon(True)
@@ -753,7 +756,7 @@ class ControllerAlgorithm(Controller):
         self.message('*** main thread waiting')
         queue.join()
         i = 0
-        while i < 100:
+        while i < 10:
             for i in range(MAX_THREADS):
                 queue.put(self.best_solution)
             self.message('*** main thread waiting')
