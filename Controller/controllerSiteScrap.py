@@ -63,7 +63,7 @@ class ControllerSiteScrap(Controller):
             url = card.cardurl
             self.message("Url :{}".format(url))
             self.message("Entering while")
-            while hits < 1000 and max_pages > page:
+            while hits < 100 and max_pages > page:
                 self.message("Entered while")
                 args2 = card.id + "," + str(page) + ","
                 args = args1 + args2
