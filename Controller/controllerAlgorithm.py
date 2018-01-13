@@ -5,7 +5,7 @@ import threading
 import random
 import copy
 
-MAX_NO_IMPROVE = 10
+MAX_NO_IMPROVE = 20
 CHANGE_VALUE = 0.5
 MAX_THREADS = 5
 thread_lock = threading.Lock()
@@ -744,7 +744,7 @@ class ControllerAlgorithm(Controller):
         new_price_overall = self.eval_cost(shopping_list, location)
         change_value = 0
         for i in range(MAX_THREADS):
-            queue.put(self.best_solution)
+            queue.put(copy.deepcopy(self.best_solution))
         for i in range(MAX_THREADS):
             worker = threading.Thread(
                 target=self.mutator,
@@ -755,13 +755,14 @@ class ControllerAlgorithm(Controller):
             worker.start()
         self.message('*** main thread waiting')
         queue.join()
-        i = 0
-        while i < 10:
+        ind = 0
+        while ind < 10:
             for i in range(MAX_THREADS):
-                queue.put(self.best_solution)
+                queue.put(copy.deepcopy(self.best_solution))
             self.message('*** main thread waiting')
             queue.join()
-            i += 1
+            ind += 1
+            print("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH + " + str(ind))
 
 
         shipping_overall = 0
