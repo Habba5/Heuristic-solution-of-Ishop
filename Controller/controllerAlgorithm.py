@@ -5,7 +5,7 @@ import threading
 import random
 import copy
 
-MAX_NO_IMPROVE = 200
+MAX_NO_IMPROVE = 100
 CHANGE_VALUE = 0.5
 MAX_THREADS = 5
 thread_lock = threading.Lock()
@@ -28,9 +28,9 @@ class ControllerAlgorithm(Controller):
             shopping_list = q.get()
             no_improve = 0
             while no_improve < MAX_NO_IMPROVE:
-                thread_lock.acquire()
+                #thread_lock.acquire()
                 new_shopping_list = self.random_order(shopping_list, deck, int(len(shopping_list) * CHANGE_VALUE))
-                thread_lock.release()
+                #thread_lock.release()
                 new_shopping_list = self.local_search(deck, location, new_shopping_list)
                 if self.eval_cost(new_shopping_list, location) < self.eval_cost(shopping_list, location):
                     self.message('Found better Solution')
@@ -347,7 +347,7 @@ class ControllerAlgorithm(Controller):
                             current_sequence_card[index].overall_price_per_card = price_per_card
             # Sortiere die Liste nach overall_price_per_card
             current_sequence_card.sort(key=lambda x: x.overall_price_per_card, reverse=False)
-            for usable_item in current_sequence_card:
+            for ind_item, usable_item in enumerate(current_sequence_card):
                 if amount_satisfied == amount_to_Satisfy:
                     break
                 else:
@@ -357,15 +357,16 @@ class ControllerAlgorithm(Controller):
                     else:
                         max_amount_usable_item = usable_item.amountaviable
                     if (amount_satisfied + max_amount_usable_item) < amount_to_Satisfy:
+                        usable_item.amountaviable_used = max_amount_usable_item
                         usable_sequence.append(usable_item)
                         amount_satisfied += max_amount_usable_item
                     else:
                         if usable_item.playset:
-                            usable_item.amountaviable = int(math.ceil((amount_to_Satisfy - amount_satisfied)/4))
+                            current_sequence_card[ind_item].amountaviable_used = int(math.ceil((amount_to_Satisfy - amount_satisfied)/4))
                         else:
-                            usable_item.amountaviable = amount_to_Satisfy - amount_satisfied
+                            current_sequence_card[ind_item].amountaviable_used = amount_to_Satisfy - amount_satisfied
                         amount_satisfied = amount_to_Satisfy
-                        usable_sequence.append(usable_item)
+                        usable_sequence.append(current_sequence_card[ind_item])
             shopping_list.extend(usable_sequence)
         return shopping_list
 
@@ -667,7 +668,7 @@ class ControllerAlgorithm(Controller):
                             current_sequence_card[index].overall_price_per_card = price_per_card
             # Sortiere die Liste nach overall_price_per_card
             current_sequence_card.sort(key=lambda x: x.overall_price_per_card, reverse=False)
-            for usable_item in current_sequence_card:
+            for ind_item, usable_item in enumerate(current_sequence_card):
                 if amount_satisfied == amount_to_Satisfy:
                     break
                 else:
@@ -677,15 +678,16 @@ class ControllerAlgorithm(Controller):
                     else:
                         max_amount_usable_item = usable_item.amountaviable
                     if (amount_satisfied + max_amount_usable_item) < amount_to_Satisfy:
+                        usable_item.amountaviable_used = max_amount_usable_item
                         usable_sequence.append(usable_item)
                         amount_satisfied += max_amount_usable_item
                     else:
                         if usable_item.playset:
-                            usable_item.amountaviable = int(math.ceil((amount_to_Satisfy - amount_satisfied)/4))
+                            current_sequence_card[ind_item].amountaviable_used = int(math.ceil((amount_to_Satisfy - amount_satisfied)/4))
                         else:
-                            usable_item.amountaviable = amount_to_Satisfy - amount_satisfied
+                            current_sequence_card[ind_item].amountaviable_used = amount_to_Satisfy - amount_satisfied
                         amount_satisfied = amount_to_Satisfy
-                        usable_sequence.append(usable_item)
+                        usable_sequence.append(current_sequence_card[ind_item])
             shopping_list.extend(usable_sequence)
         return shopping_list
 
@@ -702,9 +704,9 @@ class ControllerAlgorithm(Controller):
                 temp_buyer = item.distributorname
                 temp_location = item.location
                 if item.playset:
-                    temp_amount = item.amountaviable * 4
+                    temp_amount = item.amountaviable_used * 4
                 else:
-                    temp_amount = item.amountaviable
+                    temp_amount = item.amountaviable_used
                 temp_price = temp_amount * item.price
             else:
                 if temp_buyer != item.distributorname:
@@ -712,17 +714,17 @@ class ControllerAlgorithm(Controller):
                     temp_location = item.location
                     temp_buyer = item.distributorname
                     if item.playset:
-                        temp_amount = item.amountaviable * 4
+                        temp_amount = item.amountaviable_used * 4
                     else:
-                        temp_amount = item.amountaviable
+                        temp_amount = item.amountaviable_used
                     temp_price = temp_amount * item.price
                 else:
                     temp = 0
                     if item.playset:
-                        temp = item.amountaviable * 4
+                        temp = item.amountaviable_used * 4
                         temp_amount += temp
                     else:
-                        temp = item.amountaviable
+                        temp = item.amountaviable_used
                         temp_amount += temp
                     temp_price += temp * item.price
         overall_price += self.calculateShipping(temp_location, location, temp_amount, temp_price)
@@ -756,7 +758,7 @@ class ControllerAlgorithm(Controller):
         self.message('*** main thread waiting')
         queue.join()
         ind = 0
-        while ind < 100:
+        while ind < 50:
             for i in range(MAX_THREADS):
                 queue.put(copy.deepcopy(self.best_solution))
             self.message('*** main thread waiting')
@@ -776,7 +778,7 @@ class ControllerAlgorithm(Controller):
             #if last_distributor != item.distributorname:
                 #shipping_temp = 0
             #price_overall += item.overall_price_per_card
-            print("Händler: " + item.distributorname + " Preis pro Karte: " + str(item.price) + " Anzahl der Karten: " + str(item.amountaviable)+ " Kartenname: " + item.cardname + " Playset: " + str(item.playset))
+            print("Händler: " + item.distributorname + " Preis pro Karte: " + str(item.price) + " Anzahl der Karten: " + str(item.amountaviable_used)+ " Kartenname: " + item.cardname + " Playset: " + str(item.playset))
         #print(price_overall)
         print(new_price_overall)
         print(self.eval_cost(self.best_solution, location))

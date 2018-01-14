@@ -27,7 +27,8 @@ class ControllerBuy(Controller):
 
         # Click on the submit button
         submit.click()
-        shopping_list = self.model.shopping_list
+        #shopping_list = self.model.shopping_list
+        shopping_list = self.model.best_solution
         for item in shopping_list:
             while True:
                 time.sleep(2)
