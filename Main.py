@@ -107,14 +107,17 @@ if (__name__ == "__main__"):
     #controller[2] = ControllerCardListing(model[1], view[2])
     # model = Model()
     # start()
-    login(tk)
-    cardSearch(tk)
-    cardListing(tk)
-    #login()
-    siteScrap(tk)
-    print("Jo")
-    minmin(tk)
-    buying()
+    try:
+        login(tk)
+        cardSearch(tk)
+        cardListing(tk)
+        #login()
+        siteScrap(tk)
+        print("Jo")
+        minmin(tk)
+        buying()
+    except TclError:
+        pass
 
 #viewLogin.main_loop()
 #viewCardSearch.main_loop()
