@@ -39,29 +39,31 @@ controllerSiteScrap = NONE
 controllerAlgorithm = NONE
 controller = [controllerLogin, controllerCardSearch, controllerCardListing, controllerSiteScrap, controllerAlgorithm, controllerCardBuy]
 
+#tk.title("Einkaufshelfer für magickartenmarkt.de")
+
 def buying():
     view[4] = ViewMinMin()
     controller[5] = ControllerBuy(model[0], model[1], view[4])
     view[4] = NONE
     controller[5] = NONE
 
-def minmin():
-    view[4] = ViewMinMin()
+def minmin(tk):
+    view[4] = ViewMinMin(tk)
     controller[4] = ControllerAlgorithm(model[1], view[4])
     #controller[4].view.main_loop()
     view[4] = NONE
     controller[4] = NONE
 
-def siteScrap():
-    view[3] = ViewSiteScrap()
+def siteScrap(tk):
+    view[3] = ViewSiteScrap(tk)
     controller[3] = ControllerSiteScrap(model[1], view[3])
     #controller[3].view.main_loop()
     view[3] = NONE
     controller[3] = NONE
 
-def cardSearch():
+def cardSearch(tk):
     #model[1] = ModelDeck()
-    view[1] = ViewCardSearch()
+    view[1] = ViewCardSearch(tk)
     controller[1] = ControllerCardSearch(model[1], view[1])
     #controllerCardSearch = ControllerCardSearch(model)
     #view[1].frame.after(100, view[1].testprog())
@@ -70,16 +72,16 @@ def cardSearch():
     view[1] = NONE
     controller[1] = NONE
 
-def cardListing():
-    view[2] = ViewCardListing()
+def cardListing(tk):
+    view[2] = ViewCardListing(tk)
     controller[2] = ControllerCardListing(model[1], view[2])
     # controllerCardListing = ControllerCardListing(model)
     controller[2].view.main_loop()
     view[2] = NONE
     controller[2] = NONE
 
-def login():
-    view[0] = ViewLogin()
+def login(tk):
+    view[0] = ViewLogin(master=tk)
     controller[0] = ControllerLogin(model[0], view[0])
     controller[0].view.main_loop()
     #controller[0].view.clear_frame()
@@ -95,7 +97,7 @@ def login():
     #controllerLogin.view.main_loop()
 
 if (__name__ == "__main__"):
-    #tk = Tk()
+    tk = Tk()
     #view[0] = ViewLogin()
     #controller[0] = ControllerLogin(model[0], view[0])
     #view[1] = ViewCardSearch()
@@ -105,14 +107,14 @@ if (__name__ == "__main__"):
     #controller[2] = ControllerCardListing(model[1], view[2])
     # model = Model()
     # start()
+    login(tk)
+    cardSearch(tk)
+    cardListing(tk)
     #login()
-    cardSearch()
-    cardListing()
-    #login()
-    siteScrap()
+    siteScrap(tk)
     print("Jo")
-    minmin()
-    #buying()
+    minmin(tk)
+    buying()
 
 #viewLogin.main_loop()
 #viewCardSearch.main_loop()

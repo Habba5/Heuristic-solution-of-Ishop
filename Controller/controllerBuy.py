@@ -27,21 +27,28 @@ class ControllerBuy(Controller):
 
         # Click on the submit button
         submit.click()
-        #shopping_list = self.model.shopping_list
-        shopping_list = self.model.best_solution
+        shopping_list = self.model.shopping_list
+        #shopping_list = self.model.best_solution
         for item in shopping_list:
             while True:
                 time.sleep(2)
                 try:
                     id = item.id
-                    amount = item.amountaviable
+                    amount = item.amountaviable_used
                     script = "jcp('xvNHXYCEKnO%5DD%0B%08r%7Etnv%5C%5D%7BIHT%5DS%25%2A%2A%2A'+encodeURI('"+id+"'+','+"+str(amount)+"+','+'1'),addArticleToSCCallback,false,false,false)"
                     browser.execute_script(str(script))
                     break
                 except UnexpectedAlertPresentException as e:
                     print(e)
                     if(str(e).find("nicht zum Kauf verfügbar") != -1):
-                        print("Konnte disen Artikel nicht finden: " + item.distributorname + " Anzahl: " + str(item.amountaviable) + " Preis pro Karte: " + str(item.price))
+                        print("Konnte disen Artikel nicht finden: " + item.distributorname + " Anzahl: " + str(item.amountaviable_used) + "Kartenname : " + item.cardname + " Preis pro Karte: " + str(item.price))
+                        time.sleep(5)
+                        browser.switch_to.alert.accept()
+                        browser.switch_to.default_content()
+                        break
+                    elif (str(e).find("maximale Anzahl von Kopien") != -1):
+                        print("Geht nur wahrscheinlich maximal 4: " + item.distributorname + " Anzahl: " + str(
+                            item.amountaviable_used) + "Kartenname : " + item.cardname + " Preis pro Karte: " + str(item.price))
                         time.sleep(5)
                         browser.switch_to.alert.accept()
                         browser.switch_to.default_content()

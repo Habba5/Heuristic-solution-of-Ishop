@@ -22,6 +22,7 @@ class ControllerLogin(Controller):
             # Fetch username, password input boxes and submit button
             username_site = browser.find_element_by_id("username")
             password_site = browser.find_element_by_id("userPassword")
+            print("Password :" + password)
             submit = browser.find_element_by_id("login-btn")
 
             # Input text in username and password inputboxes

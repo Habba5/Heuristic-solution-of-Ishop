@@ -49,7 +49,7 @@ session.head('https://www.cardmarket.com/')
 response = session.post(
     url='https://www.cardmarket.com/iajax.php',
     data={
-    'args' : 'ug%60a%60K%5BQRSAP%0F%0Cvrxb%7CYImO%25%22%2B.%21%2B%12%26%2A%25%2F%2A%2A%2A4352,0,'
+    'args' : 'ug%60a%60K%5BQRSAP%0F%0Cvrxb%7CYImO%25%22%2B.%21%2B%12%26%2A%25%2F%2A%2A%2A4352,0,a:1:%7Bs:8:%22idViewer%22;s:7:%221713891%22;%7D'
     },
     headers={
         'Referer': 'https://www.cardmarket.com/de/Magic/Cards/Propaganda'

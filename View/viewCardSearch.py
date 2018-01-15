@@ -2,8 +2,8 @@ from View.view import *
 from tkinter import ttk
 
 class ViewCardSearch(View):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, master=None):
+        super().__init__(master)
         self.running = 0
         self.progress = None
 
@@ -12,19 +12,18 @@ class ViewCardSearch(View):
         # self.clear_screen()
         # self.frame.grid(sticky="nsew")
 
-        lbl = Label(self.frame, text="Karten die bestellt werden sollen: ")
+        lbl = Label(self, text="Karten die bestellt werden sollen: ")
         lbl.grid(row=0, sticky="nsew", padx=5, pady=5)
 
-        TextArea = Text()
+        TextArea = Text(self)
         TextArea.grid(row=1, column=0, padx=5, pady=5)
-        btn = Button(self.frame, text="Karten prüfen", command=lambda: self.clickedCardSearch(TextArea.get("1.0", 'end-1c')))
+        btn = Button(self, text="Karten prüfen", command=lambda: self.clickedCardSearch(TextArea.get("1.0", 'end-1c')))
         btn.grid(row=2, sticky="w", column=0, padx=5, pady=5)
 
     def testprog(self, size, unfinished, threadstate):
         if(threadstate == 0):
             if(self.running == 0):
                 self.running = 1
-                self.parent.withdraw()
                 toplevel = Toplevel()
                 lbl = Label(toplevel, text="Bin am arbeiten")
                 lbl.grid(row=0, sticky="nsew", padx=5, pady=5)
@@ -39,13 +38,16 @@ class ViewCardSearch(View):
                 self.progress.update()
         else:
             self.progress.stop()
+            self.progress.master.destroy()
+            self.master.deiconify()
 
     def clickedCardSearch(self, cards):
+        self.master.withdraw()
         self.controller.searchCards(cards)
 
-    def shutdown_ttk_repeat(self):
-        self.parent.eval('::ttk::CancelRepeat')
-        self.parent.destroy()
+    #def shutdown_ttk_repeat(self):
+        #self.parent.eval('::ttk::CancelRepeat')
+        #self.parent.destroy()
 
     def viewError(self, error, errorcards):
         toplevel = Toplevel()

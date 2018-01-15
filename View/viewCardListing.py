@@ -6,8 +6,8 @@ from Enum.Condition import *
 
 
 class ViewCardListing(View):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, master=None):
+        super().__init__(master)
         # Variable for amounts of every card
         # can be edit by a textfield
         self.cardamount = []
@@ -65,11 +65,11 @@ class ViewCardListing(View):
         super().view()
 
         # Creating a Canvas inside the frame, with a scrollbar
-        self.canvas = Canvas(self.frame, width=700)
+        self.canvas = Canvas(self, width=700)
 
         self.canvas.pack(side=LEFT)
 
-        scrollbar = Scrollbar(self.frame, command=self.canvas.yview)
+        scrollbar = Scrollbar(self, command=self.canvas.yview)
         scrollbar.pack(side=LEFT, fill='y')
 
         self.canvas.configure(yscrollcommand=scrollbar.set)
