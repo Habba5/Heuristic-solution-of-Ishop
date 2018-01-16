@@ -73,7 +73,7 @@ class ControllerSiteScrap(Controller):
             while hits < 250 and max_pages > page:
                 self.message("Entered while")
                 args2 = card.id + "," + str(page) + ","
-                args = args1 + args2 + "a:1:%7Bs:8:%22idViewer%22;s:7:%221713891%22;%7D"
+                args = args1 + args2 + "a:1:%7Bs:8:%22idViewer%22;s:6:%22614147%22;%7D"
                 self.message("Args:{}".format(args))
                 run_post = True
                 while run_post:

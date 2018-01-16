@@ -5,8 +5,8 @@ import threading
 import random
 import copy
 
-MAX_NO_IMPROVE = 10
-CHANGE_VALUE = 0.5
+MAX_NO_IMPROVE = 30
+CHANGE_VALUE = 0.7
 MAX_THREADS = 8
 thread_lock = threading.Lock()
 
@@ -110,13 +110,13 @@ class ControllerAlgorithm(Controller):
         between500_2500price = 12.0
         #Durchschnittliche Versandkosten in Europa(irgendwie ist innerhalb Deutschland Konkurenzlos günstig)
         if locationBuyer != "Deutschland" or locationSeller != "Deutschland":
-            default_price_20g = 3.0
-            default_price_50g = 4.0
-            default_price_500g = 5.5
-            between25_50_price = 9.0
-            between50_100_price = 11.0
-            between100_500price = 14.0
-            between500_2500price = 28.0
+            default_price_20g = 2.0
+            default_price_50g = 3.0
+            default_price_500g = 4.5
+            between25_50_price = 8.0
+            between50_100_price = 10.0
+            between100_500price = 12.0
+            between500_2500price = 24.0
 
         # bei höheren Preisen ist Gewicht vernachlässigbar
         if totalprice <= 25:
@@ -360,7 +360,7 @@ class ControllerAlgorithm(Controller):
             # Sortiere die Liste nach overall_price_per_card
             current_sequence_card.sort(key=lambda x: x.overall_price_per_card, reverse=False)
             for ind_item, usable_item in enumerate(current_sequence_card):
-                if amount_satisfied == amount_to_Satisfy:
+                if amount_satisfied >= amount_to_Satisfy:
                     break
                 else:
                     max_amount_usable_item = 0
@@ -369,7 +369,10 @@ class ControllerAlgorithm(Controller):
                     else:
                         max_amount_usable_item = usable_item.amountaviable
                     if (amount_satisfied + max_amount_usable_item) <= amount_to_Satisfy:
-                        current_sequence_card[ind_item].amountaviable_used = max_amount_usable_item
+                        if usable_item.playset:
+                            current_sequence_card[ind_item].amountaviable_used = max_amount_usable_item / 4
+                        else:
+                            current_sequence_card[ind_item].amountaviable_used = max_amount_usable_item
                         usable_sequence.append(current_sequence_card[ind_item])
                         amount_satisfied += max_amount_usable_item
                     else:
@@ -697,7 +700,10 @@ class ControllerAlgorithm(Controller):
                     else:
                         max_amount_usable_item = usable_item.amountaviable
                     if (amount_satisfied + max_amount_usable_item) < amount_to_Satisfy:
-                        usable_item.amountaviable_used = max_amount_usable_item
+                        if usable_item.playset:
+                            current_sequence_card[ind_item].amountaviable_used = max_amount_usable_item / 4
+                        else:
+                            current_sequence_card[ind_item].amountaviable_used = max_amount_usable_item
                         usable_sequence.append(usable_item)
                         amount_satisfied += max_amount_usable_item
                     else:
@@ -779,7 +785,7 @@ class ControllerAlgorithm(Controller):
         self.message('*** main thread waiting')
         queue.join()
         ind = 0
-        while ind < 5:
+        while ind < 50:
             for i in range(MAX_THREADS):
                 queue.put(copy.deepcopy(self.best_solution))
             self.message('*** main thread waiting')
