@@ -204,9 +204,9 @@ class ControllerAlgorithm(Controller):
                                                 offer_playset_mutator = 1
                                                 if offer.playset:
                                                     offer_playset_mutator = 4
-                                                if float(offer.price)/float(offer_playset_mutator) < self.calculateShipping(seq.location, location,
+                                                if float(offer.price)/float(offer_playset_mutator) < (self.calculateShipping(seq.location, location,
                                                                                         max_amount_for_seq,
-                                                                                        total_price_distributor):
+                                                                                        total_price_distributor)/float(max_amount_for_seq)):
                                                     amount_without_seq = 0
                                                     amount_without_seq = amount_in_sequence - max_amount_for_seq
                                                     # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
@@ -270,9 +270,9 @@ class ControllerAlgorithm(Controller):
                                                 total_price_offer = max_amount_for_offer * offer.price
                                             # total_price_seq = max_amount_for_seq * seq.price
                                             # total_price_offer = max_amount_for_offer * offer.price
-                                            if self.calculateShipping(offer.location, location, max_amount_for_offer,
-                                                                      total_price_offer) < self.calculateShipping(
-                                                seq.location, location, max_amount_for_seq, total_price_seq):
+                                            if (self.calculateShipping(offer.location, location, max_amount_for_offer,
+                                                                      total_price_offer)/float(max_amount_for_offer)) < (self.calculateShipping(
+                                                seq.location, location, max_amount_for_seq, total_price_seq)/float(max_amount_for_seq)):
                                                 amount_without_seq = amount_in_sequence - max_amount_for_seq
                                                 # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                                 # , so entferne das Angebot aus seq und tausche es durch das neue aus
@@ -450,9 +450,9 @@ class ControllerAlgorithm(Controller):
                                             offer_playset_mutator = 1
                                             if offer.playset:
                                                 offer_playset_mutator = 4
-                                            if float(offer.price) / float(offer_playset_mutator) < self.calculateShipping(seq.location, location,
+                                            if float(offer.price) / float(offer_playset_mutator) < (self.calculateShipping(seq.location, location,
                                                                                     max_amount_for_seq,
-                                                                                    total_price_distributor):
+                                                                                    total_price_distributor)/float(max_amount_for_seq)):
                                                 amount_without_seq = amount_in_sequence - max_amount_for_seq
                                                 # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                                 # , so entferne das Angebot aus seq und tausche es durch das neue aus
@@ -499,9 +499,9 @@ class ControllerAlgorithm(Controller):
                                             else:
                                                 max_amount_for_offer = amount_to_Satisfy
                                             total_price_offer = max_amount_for_offer * offer.price
-                                        if self.calculateShipping(offer.location, location, max_amount_for_offer,
-                                                                  total_price_offer) < self.calculateShipping(
-                                                seq.location, location, max_amount_for_seq, total_price_seq):
+                                        if (self.calculateShipping(offer.location, location, max_amount_for_offer,
+                                                                  total_price_offer)/float(max_amount_for_offer)) < (self.calculateShipping(
+                                                seq.location, location, max_amount_for_seq, total_price_seq)/float(max_amount_for_seq)):
                                             amount_without_seq = amount_in_sequence - max_amount_for_seq
                                             # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                             # , so entferne das Angebot aus seq und tausche es durch das neue aus
@@ -545,9 +545,9 @@ class ControllerAlgorithm(Controller):
                                             offer_playset_mutator = 1
                                             if offer.playset:
                                                 offer_playset_mutator = 4
-                                            if float(offer.price)/float(offer_playset_mutator) < self.calculateShipping(seq.location, location,
+                                            if float(offer.price)/float(offer_playset_mutator) < (self.calculateShipping(seq.location, location,
                                                                                     max_amount_for_seq,
-                                                                                    total_price_distributor):
+                                                                                    total_price_distributor)/float(max_amount_for_seq)):
                                                 amount_without_seq = amount_in_sequence - max_amount_for_seq
                                                 # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                                 # , so entferne das Angebot aus seq und tausche es durch das neue aus
@@ -597,9 +597,9 @@ class ControllerAlgorithm(Controller):
                                                 max_amount_for_offer = amount_to_Satisfy
                                             total_price_offer = max_amount_for_offer * offer.price
 
-                                        if self.calculateShipping(offer.location, location, max_amount_for_offer,
-                                                                  total_price_offer) < self.calculateShipping(
-                                                seq.location, location, max_amount_for_seq, total_price_seq):
+                                        if (self.calculateShipping(offer.location, location, max_amount_for_offer,
+                                                                  total_price_offer)/float(max_amount_for_offer)) < (self.calculateShipping(
+                                                seq.location, location, max_amount_for_seq, total_price_seq)/float(max_amount_for_seq)):
                                             amount_without_seq = amount_in_sequence - max_amount_for_seq
                                             # Wenn nach theoretischem entfernen und hinzufügen des neuen Angebots die Anzahl die benötigt wird erreicht wird
                                             # , so entferne das Angebot aus seq und tausche es durch das neue aus
