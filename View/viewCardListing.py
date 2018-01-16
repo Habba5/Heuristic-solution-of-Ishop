@@ -65,7 +65,7 @@ class ViewCardListing(View):
         super().view()
 
         # Creating a Canvas inside the frame, with a scrollbar
-        self.canvas = Canvas(self, width=700)
+        self.canvas = Canvas(self, width=800)
 
         self.canvas.pack(side=LEFT)
 

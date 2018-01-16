@@ -76,33 +76,27 @@ class ControllerCardSearch(Controller):
 
 
     def searchCards(self, cards):
-        #time.sleep(5)
+        # Buffer
         buf = io.StringIO(cards)
-        # wrongcards = []
+        # Liste der Karten
         listcard = []
         for line in buf:
             listcard.append(line.split(' ', 1))
 
+        # Url der Seite
         urlcardde='https://www.cardmarket.com/de/Magic/Cards/'
-        # urlcarden='https://www.cardmarket.com/en/Magic/Cards/'
 
         queue = Queue()
 
         for card in listcard:
+            # Jeder String wird auf ein bestimmtes Format gebracht um die Url zu vervollständigen
             card[1] = card[1].rstrip('\n')
             cardstring = self.replace(card[1])
+            # Die einzelnen Karten werden als Aufträge in die Queue gepackt
             queue.put([(urlcardde + cardstring), card[0], card[1]])
-            # if self.exists(urlcardde + cardstring):
-            #     if self.model.addcard(card[0], card[1], (urlcardde + cardstring)) == 0:
-            #         wrongcards.append(card[1])
-            # # elif self.exists(urlcarden + cardstring):
-            # #     if self.model.addcard(card[0], card[1], (urlcarden + cardstring)) == 0:
-            # #         wrongcards.append(card[1])
-            # else:
-            #     wrongcards.append(card[1])
 
         queuesize = queue.qsize()
-
+        # Erstellen der einzelnen Threads
         for i in range(MAX_THREADS):
             worker = threading.Thread(
                 target=self.testUrls,
@@ -115,20 +109,10 @@ class ControllerCardSearch(Controller):
         manager_thread = QueueChecker(queue)
         manager_thread.start()
         self.message('*** main thread waiting')
-        # Terminate UI to delete Tcl-Interpreter
-        # self.view.parent.quit()
-
+        # Check wie weit der Fortschritt ist
         while manager_thread.is_alive():
             self.view.testprog(queuesize, queue.unfinished_tasks, 0)
         self.view.testprog(queuesize, queue.unfinished_tasks, 1)
-        # starting tkinter lookup
-        # queuelength = self.queue.qsize()
-        # self.view.clear_frame()
-        # self.view.frame.after(100, self.view.testprog())
-        # self.testpoller(queuelength)
-
-        #self.message('*** main thread waiting')
-        #self.queue.join()
 
         if not self.wrongcards:
             print("success")
@@ -144,4 +128,3 @@ class ControllerCardSearch(Controller):
 
     def cardListing(self):
         self.view.clear_frame()
-        #cardListing()

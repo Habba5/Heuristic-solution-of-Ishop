@@ -194,7 +194,7 @@ class ControllerAlgorithm(Controller):
                                                         max_amount_for_seq = seq.amountaviable * 4
                                                     else:
                                                         max_amount_for_seq = amount_to_Satisfy
-                                                    total_price_distributor = max_amount_for_seq * float(seq.price)/float(4)
+                                                    total_price_distributor = math.ceil(float(max_amount_for_seq)/float(4)) * float(seq.price)
                                                 else:
                                                     if (seq.amountaviable < amount_to_Satisfy):
                                                         max_amount_for_seq = seq.amountaviable
@@ -247,7 +247,7 @@ class ControllerAlgorithm(Controller):
                                                     max_amount_for_seq = seq.amountaviable * 4
                                                 else:
                                                     max_amount_for_seq = amount_to_Satisfy
-                                                total_price_seq = max_amount_for_seq * float(seq.price) / float(4)
+                                                total_price_seq = math.ceil(float(max_amount_for_seq)/float(4)) * float(seq.price)
                                             else:
                                                 if (seq.amountaviable < amount_to_Satisfy):
                                                     max_amount_for_seq = seq.amountaviable
@@ -261,7 +261,7 @@ class ControllerAlgorithm(Controller):
                                                     max_amount_for_offer = offer.amountaviable * 4
                                                 else:
                                                     max_amount_for_offer = amount_to_Satisfy
-                                                total_price_offer = max_amount_for_offer * float(offer.price) / float(4)
+                                                total_price_offer = math.ceil(float(max_amount_for_offer)/float(4)) * float(offer.price)
                                             else:
                                                 if (offer.amountaviable < amount_to_Satisfy):
                                                     max_amount_for_offer = offer.amountaviable
@@ -440,8 +440,7 @@ class ControllerAlgorithm(Controller):
                                                     max_amount_for_seq = seq.amountaviable * 4
                                                 else:
                                                     max_amount_for_seq = amount_to_Satisfy
-                                                total_price_distributor = max_amount_for_seq * float(seq.price) / float(
-                                                    4)
+                                                total_price_distributor = math.ceil(float(max_amount_for_seq)/float(4)) * float(seq.price)
                                             else:
                                                 if (seq.amountaviable < amount_to_Satisfy):
                                                     max_amount_for_seq = seq.amountaviable
@@ -479,7 +478,7 @@ class ControllerAlgorithm(Controller):
                                                 max_amount_for_seq = seq.amountaviable * 4
                                             else:
                                                 max_amount_for_seq = amount_to_Satisfy
-                                            total_price_seq = max_amount_for_seq * float(seq.price) / float(4)
+                                            total_price_seq = math.ceil(float(max_amount_for_seq)/float(4)) * float(seq.price)
                                         else:
                                             if (seq.amountaviable < amount_to_Satisfy):
                                                 max_amount_for_seq = seq.amountaviable
@@ -493,7 +492,7 @@ class ControllerAlgorithm(Controller):
                                                 max_amount_for_offer = offer.amountaviable * 4
                                             else:
                                                 max_amount_for_offer = amount_to_Satisfy
-                                            total_price_offer = max_amount_for_offer * float(offer.price) / float(4)
+                                            total_price_offer = math.ceil(float(max_amount_for_offer)/float(4)) * float(offer.price)
                                         else:
                                             if (offer.amountaviable < amount_to_Satisfy):
                                                 max_amount_for_offer = offer.amountaviable
@@ -536,8 +535,7 @@ class ControllerAlgorithm(Controller):
                                                     max_amount_for_seq = seq.amountaviable * 4
                                                 else:
                                                     max_amount_for_seq = amount_to_Satisfy
-                                                total_price_distributor = max_amount_for_seq * float(seq.price) / float(
-                                                    4)
+                                                total_price_distributor = math.ceil(float(max_amount_for_seq)/float(4)) * float(seq.price)
                                             else:
                                                 if (seq.amountaviable < amount_to_Satisfy):
                                                     max_amount_for_seq = seq.amountaviable
@@ -577,7 +575,7 @@ class ControllerAlgorithm(Controller):
                                                 max_amount_for_seq = seq.amountaviable * 4
                                             else:
                                                 max_amount_for_seq = amount_to_Satisfy
-                                            total_price_seq = max_amount_for_seq * float(seq.price) / float(4)
+                                            total_price_seq = math.ceil(float(max_amount_for_seq)/float(4)) * float(seq.price)
                                         else:
                                             if (seq.amountaviable < amount_to_Satisfy):
                                                 max_amount_for_seq = seq.amountaviable
@@ -591,7 +589,7 @@ class ControllerAlgorithm(Controller):
                                                 max_amount_for_offer = offer.amountaviable * 4
                                             else:
                                                 max_amount_for_offer = amount_to_Satisfy
-                                            total_price_offer = max_amount_for_offer * float(offer.price) / float(4)
+                                            total_price_offer = math.ceil(float(max_amount_for_offer)/float(4)) * float(offer.price)
                                         else:
                                             if (offer.amountaviable < amount_to_Satisfy):
                                                 max_amount_for_offer = offer.amountaviable
@@ -726,9 +724,10 @@ class ControllerAlgorithm(Controller):
                 temp_location = item.location
                 if item.playset:
                     temp_amount = item.amountaviable_used * 4
+                    temp_price = item.amountaviable_used * item.price
                 else:
                     temp_amount = item.amountaviable_used
-                temp_price = temp_amount * item.price
+                    temp_price = temp_amount * item.price
             else:
                 if temp_buyer != item.distributorname:
                     overall_price += self.calculateShipping(temp_location, location, temp_amount, temp_price)
@@ -744,10 +743,11 @@ class ControllerAlgorithm(Controller):
                     if item.playset:
                         temp = item.amountaviable_used * 4
                         temp_amount += temp
+                        temp_price += item.amountaviable_used * item.price
                     else:
                         temp = item.amountaviable_used
                         temp_amount += temp
-                    temp_price += temp * item.price
+                        temp_price += temp * item.price
         overall_price += self.calculateShipping(temp_location, location, temp_amount, temp_price)
         return overall_price
 
