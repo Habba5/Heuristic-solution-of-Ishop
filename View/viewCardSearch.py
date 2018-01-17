@@ -9,9 +9,6 @@ class ViewCardSearch(View):
 
     def view(self):
         super().view()
-        # self.clear_screen()
-        # self.frame.grid(sticky="nsew")
-
         lbl = Label(self, text="Karten die bestellt werden sollen: ")
         lbl.grid(row=0, sticky="nsew", padx=5, pady=5)
 
@@ -20,6 +17,9 @@ class ViewCardSearch(View):
         btn = Button(self, text="Karten prüfen", command=lambda: self.clickedCardSearch(TextArea.get("1.0", 'end-1c')))
         btn.grid(row=2, sticky="w", column=0, padx=5, pady=5)
 
+    # Funktion ertsellt ein Toplevel Fenster
+    # Enthält ein Fortschrittsbalken
+    # Funktion soll mit Fortschritt (also Stand des Fortschritts) gepolled werden
     def testprog(self, size, unfinished, threadstate):
         if(threadstate == 0):
             if(self.running == 0):
@@ -29,11 +29,9 @@ class ViewCardSearch(View):
                 lbl.grid(row=0, sticky="nsew", padx=5, pady=5)
                 self.progress = ttk.Progressbar(toplevel, mode='determinate', maximum=unfinished)
                 self.progress.grid(row=1, sticky="nsew", padx=5, pady=50)
-                #self.progress.start()
                 self.progress.update_idletasks()
                 toplevel.update()
             else:
-                #print((size)-unfinished)
                 self.progress['value']=(size-unfinished)
                 self.progress.update()
         else:
@@ -44,10 +42,6 @@ class ViewCardSearch(View):
     def clickedCardSearch(self, cards):
         self.master.withdraw()
         self.controller.searchCards(cards)
-
-    #def shutdown_ttk_repeat(self):
-        #self.parent.eval('::ttk::CancelRepeat')
-        #self.parent.destroy()
 
     def viewError(self, error, errorcards):
         toplevel = Toplevel()

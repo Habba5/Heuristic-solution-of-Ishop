@@ -10,9 +10,11 @@ from bs4 import BeautifulSoup
 import re
 import time
 import sys, os
+from HelperClass.queueChecker import QueueChecker
 
 MAX_RECONNECT = 4
 MAX_THREADS = 8
+MAX_AMOUNT = 250
 thread_lock = threading.Lock()
 
 
@@ -21,12 +23,6 @@ class ControllerSiteScrap(Controller):
     def __init__(self, model, view):
         super().__init__(model, view)
         self.collectOffers()
-
-    def blockPrint(self):
-        sys.stdout = open(os.devnull, 'w')
-
-    def enablePrint(self):
-        sys.stdout = sys.__stdout__
 
     def message(self, s):
         print('{}: {}'.format(threading.current_thread().name, s))
@@ -55,26 +51,29 @@ class ControllerSiteScrap(Controller):
     def findWord(w):
         return re.compile(r'\b({0})\b'.format(w), flags=re.IGNORECASE).search
 
+    # SiteScrapper
+    # Methode die die Daten auf cradmarket.de sammelt
     def scrapper(self, q):
         while True:
-            self.message('looking for the next enclosure')
+            #self.message('looking for the next enclosure')
             card = q.get()
-            self.message('Scrapping offers for: {}'.format(card.cardname))
+            #self.message('Scrapping offers for: {}'.format(card.cardname))
             session = Session()
             session.head('https://www.cardmarket.com/')
             page = 0
             hits = 0
             max_pages = int(ceil(int(card.totaloffers)/50))
             args1 = card.jcppayload
-            self.message("JCP-Payload: {}".format(args1))
+            #self.message("JCP-Payload: {}".format(args1))
             url = card.cardurl
-            self.message("Url :{}".format(url))
-            self.message("Entering while")
-            while hits < 250 and max_pages > page:
-                self.message("Entered while")
+            #self.message("Url :{}".format(url))
+            #self.message("Entering while")
+            while hits < MAX_AMOUNT and max_pages > page:
+                #self.message("Entered while")
                 args2 = card.id + "," + str(page) + ","
+                # Der dritte String enthält die ID meines zweit Accounts auf cardmarket.de
                 args = args1 + args2 + "a:1:%7Bs:8:%22idViewer%22;s:6:%22614147%22;%7D"
-                self.message("Args:{}".format(args))
+                #self.message("Args:{}".format(args))
                 run_post = True
                 while run_post:
                     try:
@@ -98,7 +97,7 @@ class ControllerSiteScrap(Controller):
                 soup = BeautifulSoup(string, 'html.parser')
                 items = soup.find_all('tr')
                 #thread_lock.acquire()
-                self.message("Found items:{}".format(response.text))
+                #self.message("Found items:{}".format(response.text))
                 for item in items:
                     seller = item.find(href=self.user).text
                     string = item.find(onmouseover=self.standort)["onmouseover"]
@@ -143,18 +142,18 @@ class ControllerSiteScrap(Controller):
                     if condition_hit and language_hit and expansion_hit:
                         thread_lock.acquire()
                         card.addoffer(seller, price, sellerid, sellerlocation, amountaviable, playset)
-                        self.message("Currently on Hit:{}".format(hits))
+                        #self.message("Currently on Hit:{}".format(hits))
                         hits += 1
                         thread_lock.release()
-                #thread_lock.release()
                 page +=1
             q.task_done()
 
     def collectOffers(self):
         queue = Queue()
-        self.blockPrint()
         for card in self.model.deck:
             queue.put(card, self.model.sellerrating)
+
+        queuesize = queue.qsize()
 
         for i in range(MAX_THREADS):
             worker = threading.Thread(
@@ -165,14 +164,17 @@ class ControllerSiteScrap(Controller):
             worker.setDaemon(True)
             worker.start()
 
-        self.message('*** main thread waiting')
-        queue.join()
-
-        self.enablePrint()
+        manager_thread = QueueChecker(queue)
+        manager_thread.start()
+        #self.message('*** main thread waiting')
+        # Check wie weit der Fortschritt ist
+        while manager_thread.is_alive():
+            self.view.view(queuesize, queue.unfinished_tasks, 0)
+        self.view.view(queuesize, queue.unfinished_tasks, 1)
 
         for card in self.model.deck:
             print(card.offers)
-        #self.MinMin()
+        self.MinMin()
 
     def MinMin(self):
         self.view.clear_frame()

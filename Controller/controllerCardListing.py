@@ -40,12 +40,10 @@ class ControllerCardListing(Controller):
         print(self.model.sellerrating.name)
 
     def updateModelCardLanguage(self, i, choice, language):
-        #print(self.model.deck[i].cardlanguage)
         if(language == 0):
             self.model.deck[i].cardlanguage.remove(Language[choice])
         else:
             self.model.deck[i].cardlanguage.append(Language[choice])
-        #print(self.model.deck[i].cardlanguage)
 
     def updateModelCardCondition(self, i, choice, condition):
         print(self.model.deck[i].cardcondition)
@@ -56,7 +54,6 @@ class ControllerCardListing(Controller):
         print(self.model.deck[i].cardcondition)
 
     def updateModelCardExpansion(self, i, choice, expansion):
-        #print(self.model.deck[i].cardcondition)
         if(expansion == 0):
             self.expansions[i].remove(choice)
         else:
@@ -64,7 +61,6 @@ class ControllerCardListing(Controller):
                 self.expansions[i].append(choice)
             else:
                 self.expansions[i] = ["Egal"]
-            #self.model.deck[i].cardcondition.append(Condition[choice])
         print(self.expansions[i])
 
 
@@ -78,8 +74,4 @@ class ControllerCardListing(Controller):
             print("Updated card count at index" + str(i) + "to count" + str(count))
 
     def calculate(self):
-        #i = 0
-        #for expansion in self.expansions:
-        #    self.model.deck[i].expansions = expansion
-        #    i += 1
         self.view.clear_frame()

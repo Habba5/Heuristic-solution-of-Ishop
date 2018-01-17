@@ -1,3 +1,5 @@
+#Angebot eines Händler
+
 class Offer(object):
 
     def __init__(self, distributorname, price, id, location, amountaviable, playset):

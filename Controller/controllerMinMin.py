@@ -6,7 +6,7 @@ class ControllerMinMin(Controller):
     def __init__(self, model, view):
         super().__init__(model, view)
         self.searchMinMin()
-
+    # Fehlerhaft, wird nicht mehr verwendet
     def searchMinMin(self):
         print("Test")
         Ni = []

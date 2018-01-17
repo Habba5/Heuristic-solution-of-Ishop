@@ -4,7 +4,8 @@ from View.viewLogin import *
 from View.viewCardListing import *
 from View.viewCardSearch import *
 from View.viewSiteScrap import *
-from View.viewMinMin import *
+from View.viewAlgorithm import *
+from View.viewBuy import *
 from Controller.controllerLogin import *
 from Controller.controllerCardSearch import *
 from Controller.controllerCardListing import *
@@ -13,12 +14,13 @@ from Controller.controllerMinMin import *
 from Controller.controllerAlgorithm import *
 from Controller.controllerBuy import *
 
+# Lists of all Modules
 viewlogin = NONE
 viewcardlisting = NONE
 viewcardsearch = NONE
 viewSiteScrap = NONE
 viewMinMin = NONE
-viewBuy = None
+viewBuy = NONE
 view = [viewlogin, viewcardsearch, viewcardlisting, viewSiteScrap, viewMinMin, viewBuy]
 modelDeck = ModelDeck()
 modelCredentials = ModelCredentials()
@@ -34,23 +36,22 @@ controller = [controllerLogin, controllerCardSearch, controllerCardListing, cont
 
 
 
-def buying():
-    view[4] = ViewMinMin(master=tk)
-    controller[5] = ControllerBuy(model[0], model[1], view[4])
-    view[4] = NONE
+def buying(tk):
+    view[5] = ViewBuy(master=tk)
+    controller[5] = ControllerBuy(model[0], model[1], view[5])
+    controller[5].view.main_loop()
+    view[5] = NONE
     controller[5] = NONE
 
-def minmin(tk):
-    view[4] = ViewMinMin(master=tk)
+def algorithm(tk):
+    view[4] = ViewAlgorithm(master=tk)
     controller[4] = ControllerAlgorithm(model[1], view[4])
-    #controller[4].view.main_loop()
     view[4] = NONE
     controller[4] = NONE
 
 def siteScrap(tk):
     view[3] = ViewSiteScrap(master=tk)
     controller[3] = ControllerSiteScrap(model[1], view[3])
-    #controller[3].view.main_loop()
     view[3] = NONE
     controller[3] = NONE
 
@@ -81,10 +82,9 @@ if (__name__ == "__main__"):
         login(tk)
         cardSearch(tk)
         cardListing(tk)
-        #login()
         siteScrap(tk)
         print("Jo")
-        minmin(tk)
-        buying()
+        algorithm(tk)
+        buying(tk)
     except TclError:
         pass

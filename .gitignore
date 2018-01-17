@@ -60,3 +60,13 @@ target/
 
 # Specific Files
 MultiThreadTest.py
+testLogin.py
+testList.py
+Switch.py
+Search.py
+MVC.py
+GUI.py
+geckodriver.exe
+geckodriver.log
+enumTest
+Converter.py

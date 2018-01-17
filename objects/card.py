@@ -2,6 +2,9 @@ from Enum.Language import *
 from Enum.Condition import *
 from objects.offer import *
 
+# card simuliert Informationen über eine Karte
+# jedes card object hält eine Liste von offer objecten
+
 class Card(object):
 
     def __init__(self, cardamount, cardname, cardurl, expansions, id, jcppayload, totaloffers):

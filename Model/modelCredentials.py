@@ -1,12 +1,12 @@
 from Model.model import *
 
+# Model das Nutzerinfos speichert
 
 class ModelCredentials(Model):
 
     def __init__(self):
         self.username = None
         self.password = None
-        #self.deck = None
         super().__init__()
 
     def username(self):

@@ -8,10 +8,22 @@ from selenium.common.exceptions import NoSuchElementException
 
 class ControllerBuy(Controller):
     def __init__(self, modelcred, modeldeck, view):
-        #view = ViewLogin()
         self.modelcred = modelcred
         super().__init__(modeldeck, view)
-        self.buy()
+
+    def get_shopping_list(self):
+        new_list = []
+        distributor = []
+        for item in self.model.shopping_list:
+            if not any(x == item.distributorname for x in distributor):
+                distributor.append(item.distributorname)
+        for item in distributor:
+            new_distro_list = [x for x in self.model.shopping_list if x.distributorname == item]
+            new_list.append(new_distro_list)
+        return new_list
+
+    def get_location(self):
+        return self.model.location
 
     def buy(self):
         browser = webdriver.Chrome()
@@ -57,5 +69,6 @@ class ControllerBuy(Controller):
                     browser.switch_to.alert.accept()
                     browser.switch_to.default_content()
                     pass
-
+        self.view.clear_frame()
+        # Dont terminate to keep browser open
         time.sleep(1000)

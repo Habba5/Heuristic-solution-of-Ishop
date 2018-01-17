@@ -27,8 +27,6 @@ class ViewCardListing(View):
         self.controller.updateModelRating(rating)
 
     def updatecardlanguage(self, i, choice, language):
-        #print("Position :" + str(i) + " Sprache:" + str(language.get()))
-        #print(self.choiceslanguage.items())
         self.controller.updateModelCardLanguage(i, choice, language.get())
 
     def updatecardcondition(self, i, choice, condition):
@@ -51,11 +49,9 @@ class ViewCardListing(View):
 
     def entryupdate(self, i, newamount):
         print(i)
-        #print(sv, i, deck[i][0], sv.get())
         self.controller.updateModel(i, newamount.get())
 
     def onFrameConfigure(self, event):
-        '''Reset the scroll region to encompass the inner frame'''
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def clickedCalculate(self):

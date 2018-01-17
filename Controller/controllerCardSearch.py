@@ -7,25 +7,16 @@ from requests import Session, head, codes, get
 import time
 from bs4 import BeautifulSoup
 import re
-
+from HelperClass.queueChecker import QueueChecker
 
 MAX_THREADS = 10
 thread_lock = threading.Lock()
 
 
-class QueueChecker(threading.Thread):
-    def __init__(self, q):
-        threading.Thread.__init__(self)
-        self.q = q
-
-    def run(self):
-        self.q.join()
-
 class ControllerCardSearch(Controller):
 
     def __init__(self, model, view):
         self.wrongcards = []
-        #view = ViewCardSearch()
         super().__init__(model, view)
 
 
@@ -46,9 +37,9 @@ class ControllerCardSearch(Controller):
 
     def testUrls(self, q):
         while True:
-            self.message('looking for the next enclosure')
+            #self.message('looking for the next enclosure')
             card = q.get()
-            self.message('Testing {}'.format(card[0]))
+            #self.message('Testing {}'.format(card[0]))
             if self.exists(card[0]):
                 page = get(card[0])
                 expansions = []
@@ -64,11 +55,11 @@ class ControllerCardSearch(Controller):
                 idcard = (result[3])[:-1]
                 thread_lock.acquire()
                 if self.model.addcard(card[1], card[2], card[0], expansions, idcard, jcppayload, totaloffers) == 0:
-                    self.message('Double entry for card{}'.format(card[2]))
+                    #self.message('Double entry for card{}'.format(card[2]))
                     self.wrongcards.append(card[2])
                 thread_lock.release()
             else:
-                self.message('Card not found{}'.format(card[2]))
+                #self.message('Card not found{}'.format(card[2]))
                 thread_lock.acquire()
                 self.wrongcards.append(card[2])
                 thread_lock.release()
@@ -108,14 +99,14 @@ class ControllerCardSearch(Controller):
 
         manager_thread = QueueChecker(queue)
         manager_thread.start()
-        self.message('*** main thread waiting')
+        #self.message('*** main thread waiting')
         # Check wie weit der Fortschritt ist
         while manager_thread.is_alive():
             self.view.testprog(queuesize, queue.unfinished_tasks, 0)
         self.view.testprog(queuesize, queue.unfinished_tasks, 1)
 
         if not self.wrongcards:
-            print("success")
+            #print("success")
             self.model.printdeck()
             self.cardListing()
         else:

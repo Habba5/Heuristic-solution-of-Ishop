@@ -3,6 +3,7 @@ from Enum.Location import *
 from Enum.SellerRating import *
 from objects.card import *
 
+# Dieses Modell soll alle Infos zu Karten enthalten
 
 class ModelDeck(Model):
 
